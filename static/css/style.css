@@ -1,18 +1,26 @@
-body { font-family: sans-serif; background: #eee; }
-a, h1, h2 { color: #377BA8; }
-h1, h2 { font-family: 'Georgia', serif; margin: 0; }
+h1, h2 { font-family: Helvetica Neue, Helvetica, sans-serif; margin: 0; }
 h1 { border-bottom: 2px solid #eee; }
-h2 { font-size: 1.2em; }
-
-.page { margin: 2em auto; border: 5px solid #ccc;
-                  padding: 0.8em; background: white; }
+.wrapping {
+    border-top: 2px solid #fff;
+    background: #eee;
+    font-family: sans-serif;
+}
+.page { 
+    width: 600px;
+    margin: 2em auto; 
+    border: 5px solid #ccc;
+    padding: 0.8em; 
+    background: white; 
+}
 .metanav { text-align: right; font-size: 0.8em; padding: 0.3em;
                   margin-bottom: 1em; background: #fafafa; }
 .flash { background: #CEE5F5; padding: 0.5em;
                   border: 1px solid #AACBE2; }
 .error { background: #F0D6D6; padding: 0.5em; }
 
-/* tables */
+form {
+    float: right;
+}
 table.tablesorter {
 	font-family:arial;
 	background-color: #CDCDCD;
@@ -28,7 +36,7 @@ table.tablesorter thead tr th, table.tablesorter tfoot tr th {
 	padding: 4px;
 }
 table.tablesorter thead tr .header {
-	background-image: url(bg.gif);
+	background-image: url("img/bg.gif");
 	background-repeat: no-repeat;
 	background-position: center right;
 	cursor: pointer;
@@ -39,15 +47,28 @@ table.tablesorter tbody td {
 	background-color: #FFF;
 	vertical-align: top;
 }
+table.tablesorter tbody tr.security td {
+	color:#FF0000;
+}
+table.tablesorter thead tr th.id {
+	width: 47px;
+}
+table.tablesorter thead tr th.sev {
+	width: 57px;
+}
+table.tablesorter thead tr th.pri {
+	width: 52px;
+}
 table.tablesorter tbody tr.odd td {
 	background-color:#F0F0F6;
 }
 table.tablesorter thead tr .headerSortUp {
-	background-image: url(asc.gif);
+	background-image: url("img/asc.gif");
 }
 table.tablesorter thead tr .headerSortDown {
-	background-image: url(desc.gif);
+	background-image: url("img/desc.gif");
 }
 table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
 background-color: #8dbdd8;
 }
+

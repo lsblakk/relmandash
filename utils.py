@@ -38,26 +38,15 @@ def getToNominateBugs(beta,aurora,buglist=[]):
     if buglist != []:
         index = 0
         while index < len(buglist):
-            toNominateBeta = False
-            toNominateAurora = False
             bug = buglist[index]
             statusBeta = getattr(bug, 'cf_status_firefox'+str(beta))
             statusAurora = getattr(bug, 'cf_status_firefox'+str(aurora))
-            trackedBeta = isTracked(bug, beta) and statusBeta != 'verified' and statusBeta != 'disabled' and statusBeta != 'fixed'
-            trackedAurora = isTracked(bug, aurora) and statusAurora != 'verified' and statusAurora != 'disabled' and statusAurora != 'fixed'
+            trackedBeta = isTracked(bug, beta) and statusBeta != 'verified' and statusBeta != 'disabled' and statusBeta != 'fixed' and statusBeta != 'unaffected'
+            trackedAurora = isTracked(bug, aurora) and statusAurora != 'verified' and statusAurora != 'disabled' and statusAurora != 'fixed' and statusAurora != 'unaffected'
             if trackedBeta or trackedAurora:
-                toNominateBeta = False
-                toNominateAurora = False
-                if bug.id == 813550:
-                    print bug.id
-                    print trackedBeta
-                    print trackedAurora
+                toNominateBeta = trackedBeta
+                toNominateAurora = trackedAurora
                 for attachment in bug.attachments:
-                    toNominateBeta = True
-                    toNominateAurora = True
-                    if attachment.id == 703562:
-                        print attachment.is_patch
-                        print attachment.is_obsolete
                     if attachment.is_patch and not attachment.is_obsolete:
                         for flag in attachment.flags:
                             if trackedBeta and flag.name == 'approval-mozilla-beta':
@@ -115,6 +104,14 @@ def getToUpliftBugs(beta,aurora,buglist=[]):
             else:
                 index += 1
     return to_uplift
+
+def getKeywords(buglist):
+    keywords = []
+    for bug in buglist:
+        for keyword in bug.keywords:
+            if keyword not in keywords:
+                keywords.append(keyword)
+    return keywords
 
 def isTracked(bug,version):
     try:

@@ -1,30 +1,73 @@
 {% extends "layout.html" %}
-<script>
-    $(document).ready(function() 
-        { 
-            alert("sfsfaf");
-            $("#bugtable").tablesorter(); 
-            alert("ffdsf");
-        } 
-    ); 
-</script>
 {% block body %}
-    <h2>Individual view</h2>
+<script type=text/javascript>
+    $(function() { 
+        $("#sectable").tablesorter();
+        $("#betatable").tablesorter();
+        $("#auroratable").tablesorter();
+        $("#esrtable").tablesorter();
+        $("#nomtable").tablesorter();
+        $("#approvetable").tablesorter();
+        $("#uptable").tablesorter();
+        $("#infotable").tablesorter();
+        $("#tabs").tabs();
+    }); 
+</script>
+    <h2>{{ email }}</h2>
     {% if error %}<p class=error><strong>Error:</strong> {{ error }}
     {% else %}
-        <h3>Beta</h3>
-        {% if beta.count == 0 %}
-            <p>No bugs found</p>
-        {% else %}
-            <table id="bugtable" class="tablesorter">
+    <div id="tabs">
+        <ul>
+            <li><a href="#tab_main">Main</a></li>
+            {% if nominate %}
+            <li><a href="#tab_nomination">Awaiting nomination</a></li>
+            {% endif %}
+            {% if approve %}
+            <li><a href="#tab_approve">Awaiting approval</a></li>
+            {% endif %}
+            {% if uplift %}
+            <li><a href="#tab_uplift">Approved for uplifting</a></li>
+            {% endif %}
+            {% if needsInfo %}
+            <li><a href="#tab_info">Needs info</a></li>
+            {% endif %}
+        </ul>
+    <div id="tab_main">
+        {% if security %}
+        <h3>Security critical bugs ({{ security|length }})</h3>
+            <table id="sectable" class="tablesorter">
                 <thead>
                 <tr>
-                    <td>ID</td>
-                    <td>Severity</td>
-                    <td>Priority</td>
-                    <td>Status</td>
-                    <td>Resolution</td>
-                    <td>Summary</td>
+                    <th>ID</th>
+                    <th>Severity</th>
+                    <th>Priority</th>
+                    <th>Summary</th>
+                </tr>
+                </thead>
+                <tbody>
+            {% for bug in security %}
+                <tr class="security">
+                    <td>
+                        <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">
+                            {{bug.id}}</a>
+                    </td>
+                    <td>{{bug.severity}}</td>
+                    <td>{{bug.priority}}</td>
+                    <td>{{bug.summary}}</td>
+                </tr>
+            {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        {% if beta %}
+        <h3>Beta ({{ beta|length }})</h3>
+            <table id="betatable" class="tablesorter">
+                <thead>
+                <tr>
+                    <th class="id">ID</th>
+                    <th class="sev">Severity</th>
+                    <th class="pri">Priority</th>
+                    <th>Summary</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -36,27 +79,21 @@
                     </td>
                     <td>{{bug.severity}}</td>
                     <td>{{bug.priority}}</td>
-                    <td>{{bug.status}}</td>
-                    <td>{{bug.resolution}}</td>
                     <td>{{bug.summary}}</td>
                 </tr>
             {% endfor %}
                 </tbody>
             </table>
         {% endif %}
-        <h3>Aurora</h3>
-        {% if aurora.count == 0 %}
-            <p>No bugs found</p>
-        {% else %}
-            <table id="bugtable" class="tablesorter">
+        {% if aurora %}
+            <h3>Aurora ({{ aurora|length }})</h3>
+            <table id="auroratable" class="tablesorter">
                 <thead>
                 <tr>
-                    <td>ID</td>
-                    <td>Severity</td>
-                    <td>Priority</td>
-                    <td>Status</td>
-                    <td>Resolution</td>
-                    <td>Summary</td>
+                    <th class="id">ID</th>
+                    <th class="sev">Severity</th>
+                    <th class="pri">Priority</th>
+                    <th>Summary</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -68,27 +105,22 @@
                     </td>
                     <td>{{bug.severity}}</td>
                     <td>{{bug.priority}}</td>
-                    <td>{{bug.status}}</td>
-                    <td>{{bug.resolution}}</td>
                     <td>{{bug.summary}}</td>
                 </tr>
             {% endfor %}
                 </tbody>
             </table>
         {% endif %}
-        <h3>ESR</h3>
-        {% if esr.count == 0 %}
-            <p>No bugs found</p>
-        {% else %}
-            <table id="bugtable" class="tablesorter">
+        
+        {% if esr %}
+        <h3>ESR ({{ esr|length }})</h3>
+            <table id="esrtable" class="tablesorter">
                 <thead>
                 <tr>
-                    <td>ID</td>
-                    <td>Severity</td>
-                    <td>Priority</td>
-                    <td>Status</td>
-                    <td>Resolution</td>
-                    <td>Summary</td>
+                    <th class="id">ID</th>
+                    <th class="sev">Severity</th>
+                    <th class="pri">Priority</th>
+                    <th>Summary</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -100,31 +132,27 @@
                     </td>
                     <td>{{bug.severity}}</td>
                     <td>{{bug.priority}}</td>
-                    <td>{{bug.status}}</td>
-                    <td>{{bug.resolution}}</td>
                     <td>{{bug.summary}}</td>
                 </tr>
             {% endfor %}
                 </tbody>
             </table>
         {% endif %}
-        <h3>Security</h3>
-        {% if security.count == 0 %}
-            <p>No bugs found</p>
-        {% else %}
-            <table id="bugtable" class="tablesorter">
+    </div>
+    <div id="tab_nomination">
+        {% if nominate %}
+        <h3>To nominate ({{ nominate|length }})</h3>
+            <table id="nomtable" class="tablesorter">
                 <thead>
                 <tr>
-                    <td>ID</td>
-                    <td>Severity</td>
-                    <td>Priority</td>
-                    <td>Status</td>
-                    <td>Resolution</td>
-                    <td>Summary</td>
+                    <th class="id">ID</th>
+                    <th class="sev">Severity</th>
+                    <th class="pri">Priority</th>
+                    <th>Summary</th>
                 </tr>
                 </thead>
                 <tbody>
-            {% for bug in security %}
+            {% for bug in nominate %}
                 <tr>
                     <td>
                         <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">
@@ -132,13 +160,110 @@
                     </td>
                     <td>{{bug.severity}}</td>
                     <td>{{bug.priority}}</td>
-                    <td>{{bug.status}}</td>
-                    <td>{{bug.resolution}}</td>
                     <td>{{bug.summary}}</td>
                 </tr>
             {% endfor %}
                 </tbody>
             </table>
         {% endif %}
+    </div>
+    <div id="tab_approve">
+        {% if approve %}
+        <h3>Waiting for approval ({{ approve|length }})</h3>
+            <table id="approvetable" class="tablesorter">
+                <thead>
+                <tr>
+                    <th class="id">ID</th>
+                    <th class="sev">Severity</th>
+                    <th class="pri">Priority</th>
+                    <th>Summary</th>
+                </tr>
+                </thead>
+                <tbody>
+            {% for bug in approve %}
+                <tr>
+                    <td>
+                        <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">
+                            {{bug.id}}</a>
+                    </td>
+                    <td>{{bug.severity}}</td>
+                    <td>{{bug.priority}}</td>
+                    <td>{{bug.summary}}</td>
+                </tr>
+            {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+    <div id="tab_uplift">
+        {% if uplift %}
+         <h3>Approved, waiting to be uplifted ({{ uplift|length }})</h3>
+            <table id="uptable" class="tablesorter">
+                <thead>
+                <tr>
+                    <th class="id">ID</th>
+                    <th class="sev">Severity</th>
+                    <th class="pri">Priority</th>
+                    <th>Summary</th>
+                </tr>
+                </thead>
+                <tbody>
+            {% for bug in uplift %}
+                <tr>
+                    <td>
+                        <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">
+                            {{bug.id}}</a>
+                    </td>
+                    <td>{{bug.severity}}</td>
+                    <td>{{bug.priority}}</td>
+                    <td>{{bug.summary}}</td>
+                </tr>
+            {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+    <div id="tab_info">
+        {% if needsInfo %}
+         <h3>Requires your response ({{ needsInfo|length }})</h3>
+            <table id="infotable" class="tablesorter">
+                <thead>
+                <tr>
+                    <th class="id">ID</th>
+                    <th class="sev">Severity</th>
+                    <th class="pri">Priority</th>
+                    <th>Summary</th>
+                </tr>
+                </thead>
+                <tbody>
+            {% for bug in needsInfo %}
+                <tr 
+                {% for group in bug.groups %}
+                    {% if group.name == "core-security" %}
+                        class="security"
+                    {% endif %}
+                {% endfor %}
+                >
+                    <td>
+                        <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">
+                            {{bug.id}}</a>
+                    </td>
+                    <td>{{bug.severity}}</td>
+                    <td>{{bug.priority}}</td>
+                    <td>{{bug.summary}}</td>
+                </tr>
+            {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+    </div>
+    {% endif %}
+    {% if keywords %}
+    <form>
+        {% for keyword in keywords%}
+            <input type="checkbox" name="{{ keyword }}" value="{{ keyword }}">{{ keyword }}
+        {% endfor %}
+    </form>
     {% endif %}
 {% endblock %}

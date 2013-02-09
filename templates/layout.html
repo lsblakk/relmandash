@@ -1,16 +1,44 @@
 <!doctype html>
 <head>
-<title>Mozilla Release Metrics Dashboard</title>
-<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-<script type="text/javascript" src="{{ url_for('static', filename='jquery.min.js') }}"></script> 
-<script type="text/javascript" src="{{ url_for('static', filename='jquery.tablesorter.js') }}"></script> 
+<title>Release Tracking Dashboard</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/lightness/jquery-ui-1.10.0.custom.css') }}"/>
+<link rel="stylesheet" href="//www.mozilla.org/tabzilla/media/css/tabzilla.css"/>
+<script type=text/javascript src="{{ url_for('static', filename='js/jquery-1.9.1.min.js') }}"></script>
+<script type=text/javascript src="{{ url_for('static', filename='js/jquery-ui-1.10.0.custom.js') }}"></script>
+<script type=text/javascript src="//www.mozilla.org/tabzilla/media/js/tabzilla.js"></script>
+<script type=text/javascript src="{{ url_for('static', filename='js/login.js') }}"></script>
+<script type=text/javascript src="{{ url_for('static', filename='js/jquery.tablesorter.js') }}"></script>
+<script type=text/javascript>
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
 </head>
 <body>
-<div class=page>
-  <h1>Mozilla Release Metrics Dashboard</h1>
-  {% for message in get_flashed_messages() %}
-    <div class=flash>{{ message }}</div>
-  {% endfor %}
-  {% block body %}{% endblock %}
+<a href="http://www.mozilla.org/" id="tabzilla">mozilla</a>
+<div class=wrapping>
+    <h1>Release Tracking Dashboard</h1>
+    <div class=page>  
+        {% if session.logged_in %}
+            <p>logged in as {{ session.username }}</p>
+        {% else %}
+            <div id="form_login" title="Login Form">
+                <p class="validateTips">All form fields are required.</p>
+                <form id="login" action="{{ url_for('login') }}" method="post">
+                    <fieldset>
+                        <label for="email">Bugzilla Email</label>
+                        <input type="text" name="email" id="email" value="" class="text ui-widget-content ui-corner-all" />
+                        <label for="password">Password</label>
+                        <input type="password" name="password" id="password" value="" class="text ui-widget-content ui-corner-all" />
+                    </fieldset>
+                </form>
+            </div>
+            <button id="btn_login">Login</button>
+        {% endif %}
+        {% for message in get_flashed_messages() %}
+        <div class=flash>{{ message }}</div>
+        {% endfor %}
+        {% block body %}{% endblock %}
+    </div>
 </div>
 </body>
+
