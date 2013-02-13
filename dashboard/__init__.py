@@ -1,1 +1,1 @@
-__all__ = ['sorters','bugutils','options','versions']
+__all__ = ['sorters','bugutils','options','versions','products']

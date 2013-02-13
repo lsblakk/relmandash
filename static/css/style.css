@@ -12,18 +12,13 @@ h1 { border-bottom: 2px solid #eee; }
     padding: 0.8em; 
     background: white; 
 }
-.metanav { text-align: right; font-size: 0.8em; padding: 0.3em;
-                  margin-bottom: 1em; background: #fafafa; }
-.flash { background: #CEE5F5; padding: 0.5em;
-                  border: 1px solid #AACBE2; }
-.error { background: #F0D6D6; padding: 0.5em; }
+.error { color: #FF0000; padding: 0.5em; }
 
 form {
     float: right;
 }
 table.tablesorter {
 	font-family:arial;
-	background-color: #CDCDCD;
 	margin:10px 0pt 15px;
 	font-size: 8pt;
 	width: 100%;
@@ -41,14 +36,16 @@ table.tablesorter thead tr .header {
 	background-position: center right;
 	cursor: pointer;
 }
+table.tablesorter tbody tr.security {
+	background-color: #FBDFB3;
+}
+table.tablesorter tbody tr.confidential {
+	background-color: #E0E0FF;
+}
 table.tablesorter tbody td {
 	color: #3D3D3D;
 	padding: 4px;
-	background-color: #FFF;
 	vertical-align: top;
-}
-table.tablesorter tbody tr.security td {
-	color:#FF0000;
 }
 table.tablesorter thead tr th.id {
 	width: 47px;
@@ -58,9 +55,6 @@ table.tablesorter thead tr th.sev {
 }
 table.tablesorter thead tr th.pri {
 	width: 52px;
-}
-table.tablesorter tbody tr.odd td {
-	background-color:#F0F0F6;
 }
 table.tablesorter thead tr .headerSortUp {
 	background-image: url("img/asc.gif");
