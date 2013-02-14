@@ -55,6 +55,7 @@ class ComponentsTracker:
                     c.flag_type = component['flag_type']
                     p.component[compname] = c
                 self.products[prodname] = p
+            
         except URLError, e:
             if hasattr(e, 'reason'):
                 print 'We failed to reach a server.'

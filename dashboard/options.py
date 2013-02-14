@@ -66,7 +66,7 @@ def getNeedsInfo(email):
     }
     return options
     
-def getProdComp(product, component):
+def getProdComp(product, component, beta, aurora, esr):
     options = {
         'product':           product,
         'component':         component,
@@ -83,6 +83,15 @@ def getProdComp(product, component):
         'field0-0-3':        'status',
         'type0-0-3':         'equals',
         'value0-0-3':        'UNCONFIRMED',
+        'field0-1-0':        'cf_tracking_firefox' + str(beta),
+        'type0-1-0':         'equals',
+        'value0-1-0':        '+',
+        'field0-1-1':        'cf_tracking_firefox' + str(aurora),
+        'type0-1-1':         'equals',
+        'value0-1-1':        '+',
+        'field0-1-2':        'cf_tracking_firefox' + str(esr),
+        'type0-1-2':         'equals',
+        'value0-1-2':        '+',
         'include_fields':    '_all',
     }
     return options

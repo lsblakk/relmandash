@@ -80,19 +80,34 @@ def view_individual(email):
             bmo = session['bmo'] = BMOAgent(session['username'], session['password'])
         except:
             bmo = session['bmo'] = BMOAgent('','')
-        
-        session['email'] = email
-        options = getAssignedOptions(email)
-        buglist = bmo.get_bug_list(options)
-        keywords = getKeywords(buglist)
-        session['vt'] = vt = VersionTracker()
-        
-        security = getSecurityBugs(buglist)
-        beta = getTrackedBugs(vt.beta, buglist)
-        aurora = getTrackedBugs(vt.aurora, buglist)
-        esr = getTrackedBugs(vt.esr, buglist)
-
-        return render_template('individual.html', email=email, beta=beta, aurora=aurora, esr=esr, security=security)
+        try:
+            session['email'] = email
+            options = getAssignedOptions(email)
+            buglist = bmo.get_bug_list(options)
+            keywords = getKeywords(buglist)
+            session['vt'] = vt = VersionTracker()
+            
+            beta = getTrackedBugs(vt.beta, buglist)
+            aurora = getTrackedBugs(vt.aurora, buglist)
+            esr = getTrackedBugs(vt.esr, buglist)
+            
+            needsInfoOptions = getNeedsInfo(email)
+            needsInfo = bmo.get_bug_list(needsInfoOptions)
+            
+            followUpOptions = getToFollowUp(email, vt.beta, vt.aurora)
+            buglist = bmo.get_bug_list(followUpOptions)
+            print len(buglist)
+            for bug in buglist:
+                print bug.id
+            toNominate = getToNominateBugs(vt.beta, vt.aurora, buglist)
+            toApprove = getToApproveBugs(buglist)
+            toUplift = getToUpliftBugs(vt.beta, vt.aurora, buglist)
+            
+            return render_template('individual.html', email=email, beta=beta, aurora=aurora, esr=esr, needsInfo=needsInfo, nominate=toNominate, approve=toApprove, uplift=toUplift)
+        except ServerError, e:
+            error = 'Error requesting bugs from server. Details: \n'+e
+        except Exception, e:
+            error = e
     return render_template('individual.html', error=error)
     
 @app.route('/info')
@@ -110,12 +125,14 @@ def needs_info():
 
 @app.route('/nominate')
 def nominate():
+    print 'nominate'
     toNominateJSON = []
     try:
         vt = session['vt']
         bmo = session['bmo']
         followUpOptions = getToFollowUp(session['email'], vt.beta, vt.aurora)
         buglist = session['followUpList'] = bmo.get_bug_list(followUpOptions)
+        print len(buglist)
         toNominate = getToNominateBugs(vt.beta, vt.aurora, buglist)
         for bug in toNominate:
             toNominateJSON.append(bug.jsonify())
@@ -131,6 +148,7 @@ def approve():
         bmo = session['bmo']
         followUpOptions = getToFollowUp(session['email'], vt.beta, vt.aurora)
         buglist = session['followUpList']
+        print len(buglist)
         toApprove = getToApproveBugs(buglist)
         for bug in toApprove:
             toApproveJSON.append(bug.jsonify())
@@ -146,6 +164,7 @@ def uplift():
         bmo = session['bmo']
         followUpOptions = getToFollowUp(session['email'], vt.beta, vt.aurora)
         buglist = session['followUpList']
+        print len(buglist)
         toUplift = getToUpliftBugs(vt.beta, vt.aurora, buglist)
         for bug in toUplift:
             toUpliftJSON.append(bug.jsonify())
@@ -156,22 +175,35 @@ def uplift():
 """
     PRODUCT/COMPONENT ROUTING
 """
+@app.route('/<string:product>')
 @app.route('/<string:product>/<string:component>')
-def view_prodcomp(product, component):
+def view_prodcomp(product, component=''):
     error = 'Invalid product or component'
     ct = ComponentsTracker()
     vt = VersionTracker()
-    if product in ct.products:
-        print product
-        p = ct.products[product]
-        if component in p.component:
-            print component
-            bmo = initializeSession()
-            bugs = bmo.get_bug_list(getProdComp(product, component))
-            bugsJSON = []
-            for bug in bugs:
-                bugsJSON.append(bug.jsonify())
-            return render_template('prodcomp.html', bugs=bugs, beta=vt.beta, aurora=vt.aurora, esr=vt.esr)
+    try:
+        if product in ct.products:
+            print product
+            p = ct.products[product]
+            if component in p.component or component == '':
+                bmo = initializeSession()
+                buglist = bmo.get_bug_list(getProdComp(product, component, vt.beta, vt.aurora, vt.esr))
+                
+                if len(buglist) > 0:
+                    beta = getTrackedBugs(vt.beta, buglist)
+                    aurora = getTrackedBugs(vt.aurora, buglist)
+                    esr = getTrackedBugs(vt.esr, buglist)
+                    unassigned = getUnassignedBugs(buglist)
+                    info = getNeedsInfoBugs(buglist)
+                    keywords = getKeywords(buglist)
+                    
+                    return render_template('prodcomp.html', beta=beta, aurora=aurora, esr=esr, unassigned=unassigned, info=info, keywords=keywords)
+                else:
+                    error = 'Looks like there are no tracked bugs for this product/component!'
+    except ServerError, e:
+        error = 'Error requesting bugs from server. Details: \n'+e
+    except Exception, e:
+        error = e
     return render_template('prodcomp.html', error=error)     
 
 @app.route('/logout')
