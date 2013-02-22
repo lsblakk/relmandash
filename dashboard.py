@@ -21,7 +21,7 @@ PASSWORD = 'default'
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
-
+app.config['PROPAGATE_EXCEPTIONS'] = True
 
 @app.teardown_appcontext
 def close_db_connection(exception):
@@ -32,8 +32,24 @@ def close_db_connection(exception):
         
 @app.route('/')
 def index():
-    session['logged_in'] = False
-    return render_template('index.html')
+    if 'logged_in' not in session.keys():
+        session['logged_in'] = False
+    session['last_url'] = 'index'
+    message = ''
+    email = request.args.get('email')
+    product = request.args.get('product')
+    component = request.args.get('component')
+    if email:
+        return view_individual(email)
+    elif product:
+        if component:
+            return view_prodcomp(product, component)
+        else:
+            return view_prodcomp(product)
+    elif request.args.keys():
+        error = 'Invalid query entered!'
+        return render_template('index.html', error=error)
+    return render_template('index.html', message=message)
 
 @app.route('/newaccount', methods=['POST'])
 def login():
@@ -49,7 +65,7 @@ def login():
         session['username'] = None
         session['password'] = None
         error = 'Invalid username or password'
-    return redirect(url_for('view_individual', email="liannelee719@hotmail.com"))
+    return render_template('index.html', message=message)
     
 @app.route('/login', methods=['POST'])
 def login():
@@ -66,14 +82,14 @@ def login():
         session['password'] = None
         session['bmo'] = None
         error = 'Invalid username or password'
-    return redirect(url_for('view_individual', email="liannelee719@hotmail.com"))
-
+    return redirect(url_for('index'))
+    
 """
     INDIVIDUAL ROUTING
 """
 @app.route('/email/<string:email>')
 def view_individual(email):
-    error = 'Invalid email address'
+    error = ''
     pattern = re.compile('^[\w._%+-]+@[\w.-]+\.[A-Za-z]{2,6}$')
     if pattern.match(email):
         try:
@@ -102,80 +118,20 @@ def view_individual(email):
             toNominate = getToNominateBugs(vt.beta, vt.aurora, buglist)
             toApprove = getToApproveBugs(buglist)
             toUplift = getToUpliftBugs(vt.beta, vt.aurora, buglist)
-            
-            return render_template('individual.html', email=email, beta=beta, aurora=aurora, esr=esr, needsInfo=needsInfo, nominate=toNominate, approve=toApprove, uplift=toUplift)
-        except ServerError, e:
-            error = 'Error requesting bugs from server. Details: \n'+e
+        except AttributeError, e:
+            print 'View Individual: ' + str(e)
+            error = e
         except Exception, e:
             error = e
-    return render_template('individual.html', error=error)
-    
-@app.route('/info')
-def needs_info():
-    needsInfoJSON = []
-    try:
-        bmo = session['bmo']
-        needsInfoOptions = getNeedsInfo(session['email'])
-        needsInfo = bmo.get_bug_list(needsInfoOptions)
-        for bug in needsInfo:
-            needsInfoJSON.append(bug.jsonify())
-    except:
-        print 'error in /info'
-    return jsonify(result=needsInfoJSON)
-
-@app.route('/nominate')
-def nominate():
-    print 'nominate'
-    toNominateJSON = []
-    try:
-        vt = session['vt']
-        bmo = session['bmo']
-        followUpOptions = getToFollowUp(session['email'], vt.beta, vt.aurora)
-        buglist = session['followUpList'] = bmo.get_bug_list(followUpOptions)
-        print len(buglist)
-        toNominate = getToNominateBugs(vt.beta, vt.aurora, buglist)
-        for bug in toNominate:
-            toNominateJSON.append(bug.jsonify())
-    except:
-        print 'error in /nominate'
-    return jsonify(result=toNominateJSON)
-    
-@app.route('/approve')
-def approve():
-    toApproveJSON = []
-    try:
-        vt = session['vt']
-        bmo = session['bmo']
-        followUpOptions = getToFollowUp(session['email'], vt.beta, vt.aurora)
-        buglist = session['followUpList']
-        print len(buglist)
-        toApprove = getToApproveBugs(buglist)
-        for bug in toApprove:
-            toApproveJSON.append(bug.jsonify())
-    except:
-        print 'error in /approve'
-    return jsonify(result=toApproveJSON)
-    
-@app.route('/uplift')
-def uplift():
-    toUpliftJSON = []
-    try:
-        vt = session['vt']
-        bmo = session['bmo']
-        followUpOptions = getToFollowUp(session['email'], vt.beta, vt.aurora)
-        buglist = session['followUpList']
-        print len(buglist)
-        toUplift = getToUpliftBugs(vt.beta, vt.aurora, buglist)
-        for bug in toUplift:
-            toUpliftJSON.append(bug.jsonify())
-    except:
-        print 'error in /uplift'
-    return jsonify(result=toUpliftJSON)
+    else:
+        error = 'Invalid email address'
+    return render_template('individual.html', error=error, email=email, beta=beta, aurora=aurora, esr=esr, info=needsInfo, nominate=toNominate, approve=toApprove, uplift=toUplift)
 
 """
     PRODUCT/COMPONENT ROUTING
 """
 @app.route('/<string:product>')
+@app.route('/<string:product>/')
 @app.route('/<string:product>/<string:component>')
 def view_prodcomp(product, component=''):
     error = 'Invalid product or component'
@@ -197,7 +153,7 @@ def view_prodcomp(product, component=''):
                     info = getNeedsInfoBugs(buglist)
                     keywords = getKeywords(buglist)
                     
-                    return render_template('prodcomp.html', beta=beta, aurora=aurora, esr=esr, unassigned=unassigned, info=info, keywords=keywords)
+                    return render_template('prodcomp.html', product=product, component=component, beta=beta, aurora=aurora, esr=esr, unassigned=unassigned, info=info, keywords=keywords)
                 else:
                     error = 'Looks like there are no tracked bugs for this product/component!'
     except ServerError, e:
@@ -209,8 +165,10 @@ def view_prodcomp(product, component=''):
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
-    flash('You are now logged out')
-    return redirect(url_for('view_individual'))
+    session.pop('username', None)
+    session.pop('password', None)
+    message = 'You are now logged out'
+    return redirect(url_for('index'), message=message)
 
 def initializeSession():
     try:

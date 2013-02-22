@@ -32,23 +32,26 @@ def getToNominateBugs(beta,aurora,buglist=[]):
     to_nominate = []
     if buglist != []:
         index = 0
-        for bug in buglist:
-            statusBeta = getattr(bug, 'cf_status_firefox'+str(beta))
-            statusAurora = getattr(bug, 'cf_status_firefox'+str(aurora))
-            trackedBeta = isTracked(bug, beta) and statusBeta != 'verified' and statusBeta != 'disabled' and statusBeta != 'fixed' and statusBeta != 'unaffected'
-            trackedAurora = isTracked(bug, aurora) and statusAurora != 'verified' and statusAurora != 'disabled' and statusAurora != 'fixed' and statusAurora != 'unaffected'
-            if trackedBeta or trackedAurora:
-                toNominateBeta = trackedBeta
-                toNominateAurora = trackedAurora
-                for attachment in bug.attachments:
-                    if attachment.is_patch and not attachment.is_obsolete:
-                        for flag in attachment.flags:
-                            if trackedBeta and flag.name == 'approval-mozilla-beta':
-                                toNominateBeta = False
-                            elif trackedAurora and flag.name == 'approval-mozilla-aurora':
-                                toNominateAurora = False
-                if toNominateBeta or toNominateAurora:
-                    to_nominate.append(bug)
+        try:
+            for bug in buglist:
+                statusBeta = getattr(bug, 'cf_status_firefox'+str(beta))
+                statusAurora = getattr(bug, 'cf_status_firefox'+str(aurora))
+                trackedBeta = isTracked(bug, beta) and statusBeta != 'verified' and statusBeta != 'disabled' and statusBeta != 'fixed' and statusBeta != 'unaffected'
+                trackedAurora = isTracked(bug, aurora) and statusAurora != 'verified' and statusAurora != 'disabled' and statusAurora != 'fixed' and statusAurora != 'unaffected'
+                if trackedBeta or trackedAurora:
+                    toNominateBeta = trackedBeta
+                    toNominateAurora = trackedAurora
+                    for attachment in bug.attachments:
+                        if attachment.is_patch and not attachment.is_obsolete:
+                            for flag in attachment.flags:
+                                if trackedBeta and flag.name == 'approval-mozilla-beta':
+                                    toNominateBeta = False
+                                elif trackedAurora and flag.name == 'approval-mozilla-aurora':
+                                    toNominateAurora = False
+                    if toNominateBeta or toNominateAurora:
+                        to_nominate.append(bug)
+        except:
+            pass
     return to_nominate
     
 def getToApproveBugs(buglist=[]):
@@ -71,22 +74,25 @@ def getToUpliftBugs(beta,aurora,buglist=[]):
     to_uplift = []
     if buglist != []:
         index = 0
-        for bug in buglist:
-            isToUplift = False
-            statusBeta = getattr(bug, 'cf_status_firefox'+str(beta))
-            statusAurora = getattr(bug, 'cf_status_firefox'+str(aurora))
-            trackedBeta = isTracked(bug, beta) and statusBeta != 'verified' and statusBeta != 'disabled' and statusBeta != 'fixed'
-            trackedAurora = isTracked(bug, aurora) and statusAurora != 'verified' and statusAurora != 'disabled' and statusAurora != 'fixed'
-            if trackedBeta or trackedAurora:
-                for attachment in bug.attachments:
-                    if attachment.is_patch and not attachment.is_obsolete:
-                        for flag in attachment.flags:
-                            if flag.name == 'approval-mozilla-beta' and flag.status == '+' and trackedBeta:
-                                isToUplift = True
-                            elif flag.name == 'approval-mozilla-aurora' and flag.status == '+' and trackedAurora:
-                                isToUplift = True
-            if isToUplift:
-                to_uplift.append(bug)
+        try:
+            for bug in buglist:
+                isToUplift = False
+                statusBeta = getattr(bug, 'cf_status_firefox'+str(beta))
+                statusAurora = getattr(bug, 'cf_status_firefox'+str(aurora))
+                trackedBeta = isTracked(bug, beta) and statusBeta != 'verified' and statusBeta != 'disabled' and statusBeta != 'fixed'
+                trackedAurora = isTracked(bug, aurora) and statusAurora != 'verified' and statusAurora != 'disabled' and statusAurora != 'fixed'
+                if trackedBeta or trackedAurora:
+                    for attachment in bug.attachments:
+                        if attachment.is_patch and not attachment.is_obsolete:
+                            for flag in attachment.flags:
+                                if flag.name == 'approval-mozilla-beta' and flag.status == '+' and trackedBeta:
+                                    isToUplift = True
+                                elif flag.name == 'approval-mozilla-aurora' and flag.status == '+' and trackedAurora:
+                                    isToUplift = True
+                if isToUplift:
+                    to_uplift.append(bug)
+        except:
+            pass
     return to_uplift
     
 def getNeedsInfoBugs(buglist):

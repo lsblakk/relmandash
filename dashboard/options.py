@@ -26,8 +26,6 @@ def getToFollowUp(email, beta, aurora):
         'email1_type':      'equals',
         'email1_assigned_to':        1,
         'order':            'Last Changed',
-        'status':           'RESOLVED',
-        'resolution':       'FIXED',
         'negate0':          1,
         'field0-0-0':       'cf_tracking_firefox'+str(beta),
         'type0-0-0':        'not_equals',

@@ -1,28 +1,28 @@
 {% extends "layout.html" %}
 {% block body %}
-{% if error %}
-    <p class="error">{{ error }}</p>
-    {% else %}
 <script type=text/javascript>
     $(function() { 
-        $("#sectable").tablesorter();
-        $("#betatable").tablesorter();
-        $("#auroratable").tablesorter();
-        $("#esrtable").tablesorter();
-        $("#nomtable").tablesorter();
-        $("#approvetable").tablesorter();
-        $("#uptable").tablesorter();
-        $("#infotable").tablesorter();
+        $(".tablesorter").tablesorter();
         $("#tabs").tabs();
         $(".sev.header").click(function() {
-            sortBySeverity();
+            var selectedPanel = $("#tabs div.ui-tabs-panel:not(.ui-tabs-hide)");
+            sortBySeverity(selectedPanel);
         });
-    }); 
+        activateSort();
+    });
+
+    function activateSort() {
+        $("option").click(function() {
+            var sortClass = $(this).attr('value');
+            var selectedPanel = $("#tabs div.ui-tabs-panel:not(.ui-tabs-hide)");
+            sortBySecurity(selectedPanel);
+        });
+    }
 </script>
     <div id="tabs">
         <ul>
             <li><a href="#tab_main">Main</a></li>
-            {% if needsInfo %}<li><a href="#tab_info">Needs info</a></li>{% endif %}
+            {% if info %}<li><a href="#tab_info">Needs info</a></li>{% endif %}
             {% if nominate %}<li><a href="#tab_nomination">Awaiting nomination</a></li>{% endif %}
             {% if approve %}<li><a href="#tab_approve">Awaiting approval</a></li>{% endif %}
             {% if uplift %}<li><a href="#tab_uplift">Approved for uplifting</a></li>{% endif %}
@@ -47,7 +47,9 @@
                 {% endfor %}
                 {% for group in bug.groups %}
                     <script>$(".{{bug.id}}").addClass("{{group.name}}");</script>
+                <span class="hidden security">{{group.name}}</span>
                 {% endfor %}
+                    <span class="hidden severity">{{bug.severity}}</span>
                     <td>
                         <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">
                             {{bug.id}}</a>
@@ -79,7 +81,9 @@
                 {% endfor %}
                 {% for group in bug.groups %}
                     <script>$(".{{bug.id}}").addClass("{{group.name}}");</script>
+                <span class="hidden security">{{group.name}}</span>
                 {% endfor %}
+                    <span class="hidden severity">{{bug.severity}}</span>
                     <td>
                         <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">
                             {{bug.id}}</a>
@@ -111,7 +115,9 @@
                 {% endfor %}
                 {% for group in bug.groups %}
                     <script>$(".{{bug.id}}").addClass("{{group.name}}");</script>
+                <span class="hidden security">{{group.name}}</span>
                 {% endfor %}
+                    <span class="hidden severity">{{bug.severity}}</span>
                     <td>
                         <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">
                             {{bug.id}}</a>
@@ -148,7 +154,9 @@
                 {% endfor %}
                 {% for group in bug.groups %}
                     <script>$(".{{bug.id}}").addClass("{{group.name}}");</script>
+                <span class="hidden security">{{group.name}}</span>
                 {% endfor %}
+                    <span class="hidden severity">{{bug.severity}}</span>
                     <td>
                         <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">
                             {{bug.id}}</a>
@@ -182,7 +190,9 @@
                 {% endfor %}
                 {% for group in bug.groups %}
                     <script>$(".{{bug.id}}").addClass("{{group.name}}");</script>
+                <span class="hidden security">{{group.name}}</span>
                 {% endfor %}
+                    <span class="hidden severity">{{bug.severity}}</span>
                     <td>
                         <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">
                             {{bug.id}}</a>
@@ -216,7 +226,9 @@
                 {% endfor %}
                 {% for group in bug.groups %}
                     <script>$(".{{bug.id}}").addClass("{{group.name}}");</script>
+                <span class="hidden security">{{group.name}}</span>
                 {% endfor %}
+                    <span class="hidden severity">{{bug.severity}}</span>
                     <td>
                         <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">
                             {{bug.id}}</a>
@@ -231,8 +243,8 @@
         {% endif %}
     </div>
     <div id="tab_info">
-        {% if needsInfo %}
-         <h3>Requires your response ({{ needsInfo|length }})</h3>
+        {% if info %}
+         <h3>Requires your response ({{ info|length }})</h3>
             <div>
                 <div>
                     <button id="sort">Sort by</button>
@@ -251,15 +263,16 @@
                 </tr>
                 </thead>
                 <tbody>
-            {% for bug in needsInfo %}
+            {% for bug in info %}
                 <tr class="{{ bug.id }}">
                 {% for keyword in bug.keywords %}
                     <script>$(".{{bug.id}}").addClass("{{keyword}}");</script>
                 {% endfor %}
                 {% for group in bug.groups %}
                     <script>$(".{{bug.id}}").addClass("{{group.name}}");</script>
+                    <span class="hidden security">{{group.name}}</span>
                 {% endfor %}
-                    <span class="severity">{{bug.severity}}</span>
+                    <span class="hidden severity">{{bug.severity}}</span>
                     <td>
                         <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">
                             {{bug.id}}</a>
@@ -274,5 +287,4 @@
         {% endif %}
     </div>
     </div>
-    {% endif %}
 {% endblock %}

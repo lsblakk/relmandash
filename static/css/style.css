@@ -1,9 +1,29 @@
+h1 {
+    padding: 30px;
+}
 tag {
    cursor: pointer;
+}
+.hidden {
+    display: none;
+}
+.user {
+    float: right;
+    padding-top: 10px;
 }
 .error { color: #FF0000; padding: 0.5em; }
 ul#ul_tabs li{
     font-size: 80%;
+}
+tr.enhancement {
+    color: #CCBBB4;
+}
+tr.critical {
+    color: #FF0000;
+}
+tr.blocker {
+    color: #FF0000;
+    font-weight: bold;
 }
 table.tablesorter {
 	font-family:arial;
@@ -32,7 +52,6 @@ table.tablesorter tbody tr.mozilla-corporation-confidential {
 	background-color: #E0E0FF;
 }
 table.tablesorter tbody td {
-	color: #3D3D3D;
 	padding: 4px;
 	vertical-align: top;
 }
