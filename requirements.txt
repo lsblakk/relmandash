@@ -1,0 +1,2 @@
+Flask==0.9
+-e git://github.com/lianne719/bztools.git@dashboard#egg=bztools-dashboard

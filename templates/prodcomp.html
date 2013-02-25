@@ -1,0 +1,210 @@
+{% extends "layout.html" %}
+{% block body %}
+<script type=text/javascript>
+$(function() {
+    $(".tablesorter").tablesorter();
+    $("#tabs").tabs();
+    /*$(".sev.header").click(function() {
+        var selectedPanel = $("#tabs div.ui-tabs-panel:not(.ui-tabs-hide)");
+        sortBySeverity(selectedPanel);
+    });
+    activateSort();*/
+});
+/*
+function activateSort() {
+    $("select").change(displayVals);
+        sortClass = $('select.sort option:selected').val();
+        var selectedPanel = $("#tabs div.ui-tabs-panel:not(.ui-tabs-hide)");
+        if (sortClass == 'security') {
+            sortBySecurity(selectedPanel);
+        } 
+    });
+}*/
+</script>
+    <div id="tabs">
+        <ul id="ul_tabs">
+            {% if beta %}<li><a href="#tab_beta">Tracked Beta {{beta|length}}</a></li>{% endif %}
+            {% if aurora %}<li><a href="#tab_aurora">Tracked Aurora {{aurora|length}}</a></li>{% endif %}
+            {% if unassigned %}<li><a href="#tab_nobody">Unassigned {{unassigned|length}}</a></li>{% endif %}
+            {% if info %}<li><a href="#tab_info">Needs info {{info|length}}</a></li>{% endif %}
+            {% if esr %}<li><a href="#tab_esr">Tracked ESR {{esr|length}}</a></li>{% endif %}
+        </ul>
+        <div id="tab_beta">
+            {% if beta %}
+                <h3>Tracked Beta Bugs ({{ beta|length }})</h3>
+                Sort by:
+                <select id="sort">
+                  <option value="id">ID</option>
+                  <option value="security">Security</option>
+                  <option value="severity">Severity</option>
+                  <option value="priority">Priority</option>
+                </select> 
+                <table id="table_beta" class="tablesorter">
+                <thead>
+                    <tr>
+                        <th class="id">ID</th>
+                        <th class="sev">Severity</th>
+                        <th class="pri">Priority</th>
+                        <th>Summary</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                {% for bug in beta %}
+                    <tr class="{{ bug.id }} {{bug.severity}}">
+                    {% for keyword in bug.keywords %}
+                        <script>$(".{{bug.id}}").addClass("{{keyword}}");</script>
+                    {% endfor %}
+                    {% for group in bug.groups %}
+                        <script>$(".{{bug.id}}").addClass("{{group.name}}");</script>
+                    {% endfor %}
+                        <td>
+                            <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">
+                                {{bug.id}}</a>
+                        </td>
+                        <td>{{bug.severity}}</td>
+                        <td>{{bug.priority}}</td>
+                        <td>{{bug.summary}}</td>
+                    </tr>
+                {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+        <div id="tab_aurora">
+            {% if aurora %}
+                <h3>Tracked Aurora Bugs ({{ aurora|length }})</h3>
+                <table id="table_aurora" class="tablesorter">
+                <thead>
+                    <tr>
+                        <th class="id">ID</th>
+                        <th class="sev">Severity</th>
+                        <th class="pri">Priority</th>
+                        <th>Summary</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                {% for bug in aurora %}
+                    <tr class="{{ bug.id }} {{bug.severity}}">
+                    {% for keyword in bug.keywords %}
+                        <script>$(".{{bug.id}}").addClass("{{keyword}}");</script>
+                    {% endfor %}
+                    {% for group in bug.groups %}
+                        <script>$(".{{bug.id}}").addClass("{{group.name}}");</script>
+                    {% endfor %}
+                        <td>
+                            <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">
+                                {{bug.id}}</a>
+                        </td>
+                        <td>{{bug.severity}}</td>
+                        <td>{{bug.priority}}</td>
+                        <td>{{bug.summary}}</td>
+                    </tr>
+                {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+        <div id="tab_nobody">
+            {% if unassigned %}
+                <h3>Unassigned Bugs ({{ unassigned|length }})</h3>
+                <table id="table_nobody" class="tablesorter">
+                <thead>
+                    <tr>
+                        <th class="id">ID</th>
+                        <th class="sev">Severity</th>
+                        <th class="pri">Priority</th>
+                        <th>Summary</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                {% for bug in unassigned %}
+                    <tr class="{{ bug.id }} {{bug.severity}}">
+                    {% for keyword in bug.keywords %}
+                        <script>$(".{{bug.id}}").addClass("{{keyword}}");</script>
+                    {% endfor %}
+                    {% for group in bug.groups %}
+                        <script>$(".{{bug.id}}").addClass("{{group.name}}");</script>
+                    {% endfor %}
+                        <td>
+                            <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">
+                                {{bug.id}}</a>
+                        </td>
+                        <td>{{bug.severity}}</td>
+                        <td>{{bug.priority}}</td>
+                        <td>{{bug.summary}}</td>
+                    </tr>
+                {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+        <div id="tab_info">
+            {% if info %}
+                <h3>Bugs that need additional information ({{ info|length }})</h3>
+                <table id="table_info" class="tablesorter">
+                <thead>
+                    <tr>
+                        <th class="id">ID</th>
+                        <th class="sev">Severity</th>
+                        <th class="pri">Priority</th>
+                        <th>Summary</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                {% for bug in info %}
+                    <tr class="{{ bug.id }} {{bug.severity}}">
+                    {% for keyword in bug.keywords %}
+                        <script>$(".{{bug.id}}").addClass("{{keyword}}");</script>
+                    {% endfor %}
+                    {% for group in bug.groups %}
+                        <script>$(".{{bug.id}}").addClass("{{group.name}}");</script>
+                    {% endfor %}
+                        <td>
+                            <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">
+                                {{bug.id}}</a>
+                        </td>
+                        <td>{{bug.severity}}</td>
+                        <td>{{bug.priority}}</td>
+                        <td>{{bug.summary}}</td>
+                    </tr>
+                {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+        <div id="tab_esr">
+            {% if esr %}
+                <h3>Tracked ESR bugs ({{ esr|length }})</h3>
+                <table id="table_esr" class="tablesorter">
+                <thead>
+                    <tr>
+                        <th class="id">ID</th>
+                        <th class="sev">Severity</th>
+                        <th class="pri">Priority</th>
+                        <th>Summary</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                {% for bug in esr %}
+                    <tr class="{{ bug.id }} {{bug.severity}}">
+                    {% for keyword in bug.keywords %}
+                        <script>$(".{{bug.id}}").addClass("{{keyword}}");</script>
+                    {% endfor %}
+                    {% for group in bug.groups %}
+                        <script>$(".{{bug.id}}").addClass("{{group.name}}");</script>
+                    {% endfor %}
+                        <td>
+                            <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">
+                                {{bug.id}}</a>
+                        </td>
+                        <td>{{bug.severity}}</td>
+                        <td>{{bug.priority}}</td>
+                        <td>{{bug.summary}}</td>
+                    </tr>
+                {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
