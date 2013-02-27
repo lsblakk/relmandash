@@ -152,12 +152,10 @@ def view_prodcomp(product, component=''):
                     unassigned = getUnassignedBugs(buglist)
                     info = getNeedsInfoBugs(buglist)
                     keywords = getKeywords(buglist)
-                    
-                    return render_template('prodcomp.html', product=product, component=component, beta=beta, aurora=aurora, esr=esr, unassigned=unassigned, info=info, keywords=keywords)
+                    components = getComponents(buglist)
+                    return render_template('prodcomp.html', product=product, component=component, beta=beta, aurora=aurora, esr=esr, unassigned=unassigned, info=info, keywords=keywords, components=components)
                 else:
                     error = 'Looks like there are no tracked bugs for this product/component!'
-    except ServerError, e:
-        error = 'Error requesting bugs from server. Details: \n'+e
     except Exception, e:
         error = e
     return render_template('prodcomp.html', error=error)     

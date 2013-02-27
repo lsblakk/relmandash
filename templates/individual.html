@@ -34,29 +34,26 @@
             <thead>
                 <tr>
                     <th class="id">ID</th>
-                    <th class="sev">Severity</th>
-                    <th class="pri">Priority</th>
                     <th>Summary</th>
                 </tr>
                 </thead>
                 <tbody>
             {% for bug in beta %}
-                <tr class="{{ bug.id }}">
+                <tr class="{{ bug.id }} {{ bug.severity }}">
                 {% for keyword in bug.keywords %}
                     <script>$(".{{bug.id}}").addClass("{{keyword}}");</script>
                 {% endfor %}
                 {% for group in bug.groups %}
                     <script>$(".{{bug.id}}").addClass("{{group.name}}");</script>
-                <span class="hidden security">{{group.name}}</span>
+                    <span class="hidden security">{{group.name}}</span>
                 {% endfor %}
                     <span class="hidden severity">{{bug.severity}}</span>
+                    <span class="hidden priority">{{bug.priority}}</span>
                     <td>
                         <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">
                             {{bug.id}}</a>
                     </td>
-                    <td>{{bug.severity}}</td>
-                    <td>{{bug.priority}}</td>
-                    <td>{{bug.summary}}</td>
+                    <td>{{bug.summary}}<br/>last modified: {{bug.last_change_time}}</td>
                 </tr>
             {% endfor %}
                 </tbody>

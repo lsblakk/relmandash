@@ -117,6 +117,14 @@ def getKeywords(buglist):
             if keyword not in keywords:
                 keywords.append(keyword)
     return keywords
+    
+def getComponents(buglist):
+    components = []
+    for bug in buglist:
+        if bug.component not in components:
+            components.append(bug.component)
+    components.sort()
+    return components
 
 def isTracked(bug,version):
     try:

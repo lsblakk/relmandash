@@ -10,13 +10,14 @@
 <script type=text/javascript src="//www.mozilla.org/tabzilla/media/js/tabzilla.js"></script>
 <script type=text/javascript src="{{ url_for('static', filename='js/jquery.tablesorter.js') }}"></script>
 <script type=text/javascript src="{{ url_for('static', filename='js/login.js') }}"></script>
-<!--<script type=text/javascript src="{{ url_for('static', filename='js/sorters.js') }}"></script>-->
+<script type=text/javascript src="{{ url_for('static', filename='js/sorters.js') }}"></script>
 <script type=text/javascript src="{{ url_for('static', filename='js/keywords.js') }}"></script>
 <script type=text/javascript>
     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 </script>
 <script>
     $(function() {
+        resetTags();
         colorizeTags();
         activateTags();
     });
@@ -44,8 +45,8 @@
     </span>
 <div class="header">
     <h1>Release Tracking Dashboard 
-    {% if email %} -{{email}} {% endif %}
-    {% if product %} -{{product}} {% endif %}
+    {% if email %} - {{email}} {% endif %}
+    {% if product %} - {{product}} {% endif %}
     {% if component %}/General {% endif %}</h1>
 </div>
 <div class="colmask threecol">
@@ -69,9 +70,11 @@
             <div class="col3">
                 {% if keywords %}
                 <h3>Keywords</h3>
+                    <form>
                     {% for keyword in keywords%}
-                        <p><tag id="{{keyword}}">{{ keyword }}</tag></p>
+                        <p id="{{keyword}}"><input type="checkbox" name="keywords" value="{{keyword}}"/><tag id="{{keyword}}">{{ keyword }}</tag></p>
                     {% endfor %}
+                    </form>
                 {% endif %}
             </div>
         </div>

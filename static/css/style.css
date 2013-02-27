@@ -1,8 +1,20 @@
 h1 {
     padding: 30px;
 }
+h4 {
+    padding-left: 30px;
+}
 tag {
+   padding: 5px;
    cursor: pointer;
+}
+.components {
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    background-color: #FFFFFF;
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto;
 }
 .hidden {
     display: none;
@@ -15,22 +27,27 @@ tag {
 ul#ul_tabs li{
     font-size: 80%;
 }
-tr.enhancement {
+.ui-menu { width: 150px; }
+.modified {
+    font-style: italic;
+    font-size: 85%;
+}
+tr.enhancement, tr.enhancement a {
     color: #CCBBB4;
 }
-tr.critical {
+tr.critical, tr.critical a {
     color: #FF0000;
 }
-tr.blocker {
+tr.blocker, tr.blocker a {
     color: #FF0000;
     font-weight: bold;
 }
-table.tablesorter {
+table {
 	font-family:arial;
+	font-size: 90%;
 	background-color: #FFFFFF;
-	margin:10px 0pt 15px;
-	font-size: 8pt;
-	width: 100%;
+	margin:10px auto 15px auto;
+	width: 80%;
 	text-align: left;
 }
 table.tablesorter thead tr th, table.tablesorter tfoot tr th {
@@ -45,23 +62,23 @@ table.tablesorter thead tr .header {
 	background-position: center right;
 	cursor: pointer;
 }
-table.tablesorter tbody tr.core-security {
+table tbody tr.core-security {
 	background-color: #FBDFB3;
 }
-table.tablesorter tbody tr.mozilla-corporation-confidential {
+table tbody tr.mozilla-corporation-confidential {
 	background-color: #E0E0FF;
 }
-table.tablesorter tbody td {
+table tbody td {
 	padding: 4px;
 	vertical-align: top;
 }
-table.tablesorter thead tr th.id {
+table thead tr th.id {
 	width: 47px;
 }
-table.tablesorter thead tr th.sev {
+table thead tr th.sev {
 	width: 57px;
 }
-table.tablesorter thead tr th.pri {
+table thead tr th.pri {
 	width: 52px;
 }
 table.tablesorter thead tr .headerSortUp {
