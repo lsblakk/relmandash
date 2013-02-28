@@ -71,6 +71,11 @@
                 {% if keywords %}
                 <h3>Keywords</h3>
                     <form>
+                    Tag method: 
+                    <select id="tagmethod" onchange="resetTags()">
+                        <option>Highlight</option>
+                        <option>Filter</option>
+                    </select>
                     {% for keyword in keywords%}
                         <p id="{{keyword}}"><input type="checkbox" name="keywords" value="{{keyword}}"/><tag id="{{keyword}}">{{ keyword }}</tag></p>
                     {% endfor %}

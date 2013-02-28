@@ -99,7 +99,7 @@ def getNeedsInfoBugs(buglist):
     needs_info = []
     for bug in buglist:
         for flag in bug.flags:
-            if flag.name == 'needinfo':
+            if flag.name == 'needinfo' and bug not in needs_info:
                 needs_info.append(bug)
     return needs_info
     

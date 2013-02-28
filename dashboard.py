@@ -23,6 +23,23 @@ app.config.from_object(__name__)
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 app.config['PROPAGATE_EXCEPTIONS'] = True
 
+def init_db():
+    """Creates the database tables."""
+    with app.app_context():
+        db = get_db()
+        with app.open_resource('schema.sql') as f:
+            db.cursor().executescript(f.read())
+        db.commit()
+
+def get_db():
+    """Opens a new database connection if there is none yet for the
+current application context.
+"""
+    top = _app_ctx_stack.top
+    if not hasattr(top, 'sqlite_db'):
+        top.sqlite_db = sqlite3.connect(app.config['DATABASE'])
+    return top.sqlite_db
+
 @app.teardown_appcontext
 def close_db_connection(exception):
     """Closes the database again at the end of the request."""
@@ -39,13 +56,11 @@ def index():
     email = request.args.get('email')
     product = request.args.get('product')
     component = request.args.get('component')
+    style = request.args.get('style')
     if email:
         return view_individual(email)
     elif product:
-        if component:
-            return view_prodcomp(product, component)
-        else:
-            return view_prodcomp(product)
+        return view_prodcomp(product=product, component=component, style=style)
     elif request.args.keys():
         error = 'Invalid query entered!'
         return render_template('index.html', error=error)
@@ -57,9 +72,16 @@ def login():
     try:
         username = request.form['email']
         password = request.form['password']
+        
+        # verify email and password
         bmo = BMOAgent(session['username'], session['password'])
-        bug = bmo.get_bug('80000');
-        session['logged_in'] = True
+        bug = bmo.get_bug('80000')
+        
+        db = get_db()
+        db.execute('insert into users (email, password) values (?, ?)',
+                     username, password)
+        db.commit()
+        return redirect(url_for('index'))
     except:
         print 'login failed'
         session['username'] = None
@@ -74,7 +96,7 @@ def login():
         session['username'] = request.form['email']
         session['password'] = request.form['password']
         bmo = session['bmo'] = BMOAgent(session['username'], session['password'])
-        bug = bmo.get_bug('80000');
+        bug = bmo.get_bug('80000')
         session['logged_in'] = True
     except:
         print 'login failed'
@@ -118,6 +140,7 @@ def view_individual(email):
             toNominate = getToNominateBugs(vt.beta, vt.aurora, buglist)
             toApprove = getToApproveBugs(buglist)
             toUplift = getToUpliftBugs(vt.beta, vt.aurora, buglist)
+            keywords = getKeywords(buglist)
         except AttributeError, e:
             print 'View Individual: ' + str(e)
             error = e
@@ -125,7 +148,7 @@ def view_individual(email):
             error = e
     else:
         error = 'Invalid email address'
-    return render_template('individual.html', error=error, email=email, beta=beta, aurora=aurora, esr=esr, info=needsInfo, nominate=toNominate, approve=toApprove, uplift=toUplift)
+    return render_template('individual.html', error=error, email=email, beta=beta, aurora=aurora, esr=esr, info=needsInfo, nominate=toNominate, approve=toApprove, uplift=toUplift, keywords=keywords)
 
 """
     PRODUCT/COMPONENT ROUTING
@@ -133,10 +156,12 @@ def view_individual(email):
 @app.route('/<string:product>')
 @app.route('/<string:product>/')
 @app.route('/<string:product>/<string:component>')
-def view_prodcomp(product, component=''):
+def view_prodcomp(product, component='', style=''):
     error = 'Invalid product or component'
     ct = ComponentsTracker()
     vt = VersionTracker()
+    if component is None:
+        component = ''
     try:
         if product in ct.products:
             print product
@@ -153,12 +178,17 @@ def view_prodcomp(product, component=''):
                     info = getNeedsInfoBugs(buglist)
                     keywords = getKeywords(buglist)
                     components = getComponents(buglist)
-                    return render_template('prodcomp.html', product=product, component=component, beta=beta, aurora=aurora, esr=esr, unassigned=unassigned, info=info, keywords=keywords, components=components)
+                    if style == 'table':
+                        return render_template('prodcomptable.html', product=product, component=component, beta=beta, aurora=aurora, esr=esr, unassigned=unassigned, info=info, keywords=keywords)
+                    elif style == 'count':
+                        return render_template('prodcompcount.html', product=product, component=component, beta=beta, aurora=aurora, esr=esr, unassigned=unassigned, info=info, components=components)
+                    else:
+                        return render_template('prodcomplist.html', product=product, component=component, beta=beta, aurora=aurora, esr=esr, unassigned=unassigned, info=info, keywords=keywords, components=components)
                 else:
                     error = 'Looks like there are no tracked bugs for this product/component!'
     except Exception, e:
         error = e
-    return render_template('prodcomp.html', error=error)     
+    return render_template('prodcomplist.html', error=error)     
 
 @app.route('/logout')
 def logout():

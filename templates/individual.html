@@ -21,11 +21,11 @@
 </script>
     <div id="tabs">
         <ul>
-            <li><a href="#tab_main">Main {{ beta|length + aurora|length + esr|length }}</a></li>
-            {% if info %}<li><a href="#tab_info">Needs info {{info|length}}</a></li>{% endif %}
-            {% if nominate %}<li><a href="#tab_nomination">Awaiting nomination {{nominate|length}}</a></li>{% endif %}
-            {% if approve %}<li><a href="#tab_approve">Awaiting approval {{approve|length}}</a></li>{% endif %}
-            {% if uplift %}<li><a href="#tab_uplift">Approved for uplifting {{uplift|length}}</a></li>{% endif %}
+            <li><a href="#tab_main">Main ({{ beta|length + aurora|length + esr|length }})</a></li>
+            {% if info %}<li><a href="#tab_info">Needs info ({{info|length}})</a></li>{% endif %}
+            {% if nominate %}<li><a href="#tab_nomination">Awaiting nomination ({{nominate|length}})</a></li>{% endif %}
+            {% if approve %}<li><a href="#tab_approve">Awaiting approval ({{approve|length}})</a></li>{% endif %}
+            {% if uplift %}<li><a href="#tab_uplift">Approved for uplifting ({{uplift|length}})</a></li>{% endif %}
         </ul>
     <div id="tab_main">
         {% if beta %}

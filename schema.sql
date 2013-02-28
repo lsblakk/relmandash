@@ -15,8 +15,9 @@ drop table if exists users;
 create table users (
     id integer primary key,
     email string not null,
+    hash string not null,
     password string not null,
-    default_url string not null
+    default_view integer references views(id)
 );
 
 drop table if exists views;

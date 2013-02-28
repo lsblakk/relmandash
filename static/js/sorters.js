@@ -9,7 +9,8 @@ function sortSecurity(table){
 }
 
 function sortNormal(table, _class, order) {
-    $('tbody').each(function(index, list) {
+    alert($('.'+table+' tbody').length);
+    $('.'+table+' tbody').each(function(index, list) {
         var listItems = $(list).children('tr');
         if (listItems.length > 1) {
             $(list).remove('tr');
@@ -28,7 +29,8 @@ function sortNormal(table, _class, order) {
 }
 
 function customSort(table, weighting, _class, order) {
-    $('tbody').each(function(index, list) {
+    alert($('.'+table+' tbody').length);
+    $('.'+table+' tbody').each(function(index, list) {
         var listItems = $(list).children('tr');
         if (listItems.length > 1) {
             $(list).remove('tr');
