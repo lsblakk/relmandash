@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block body %}
+    <h2>Sign up</h2>
+    <div title="Login Form">
+        <p class="validateTips">All form fields are required.</p>
+        <form id="login" action="{{ url_for('signup') }}" method="post">
+            <fieldset>
+                <p><label for="email">Bugzilla Email</label><br/>
+                <input type="text" name="email" id="email" value="" class="text ui-widget-content ui-corner-all" /></p>
+                <p><label for="password">Password</label><br/>
+                <input type="password" name="password" id="password" value="" class="text ui-widget-content ui-corner-all" /></p>
+                <p><label for="confirmpassword">Re-enter Password</label><br/>
+                <input type="password" name="confirmpassword" id="confirmpassword" value="" class="text ui-widget-content ui-corner-all" /></p>
+            </fieldset>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+{% endblock %}

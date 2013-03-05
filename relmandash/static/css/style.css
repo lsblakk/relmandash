@@ -1,0 +1,93 @@
+h1 {
+    padding: 30px;
+}
+h4 {
+    padding-left: 30px;
+}
+tag {
+   padding: 5px;
+   cursor: pointer;
+}
+.components {
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    background-color: #FFFFFF;
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+}
+.hidden {
+    display: none;
+}
+.user {
+    float: right;
+    padding-top: 10px;
+}
+.error { color: #FF0000; padding: 0.5em; }
+ul#ul_tabs li{
+    font-size: 80%;
+}
+.ui-menu { width: 150px; }
+.modified {
+    font-style: italic;
+    font-size: 85%;
+}
+tr.enhancement, tr.enhancement a {
+    color: #CCBBB4;
+}
+tr.critical, tr.critical a {
+    color: #FF0000;
+}
+tr.blocker, tr.blocker a {
+    color: #FF0000;
+    font-weight: bold;
+}
+table {
+	font-family:arial;
+	font-size: 90%;
+	background-color: #FFFFFF;
+	margin:10px auto 15px auto;
+	width: 80%;
+	text-align: left;
+}
+table.tablesorter thead tr th, table.tablesorter tfoot tr th {
+	background-color: #e6EEEE;
+	border: 1px solid #FFF;
+	font-size: 8pt;
+	padding: 4px;
+}
+table.tablesorter thead tr .header {
+	background-image: url("img/bg.gif");
+	background-repeat: no-repeat;
+	background-position: center right;
+	cursor: pointer;
+}
+table tbody tr.core-security {
+	background-color: #FBDFB3;
+}
+table tbody tr.mozilla-corporation-confidential {
+	background-color: #E0E0FF;
+}
+table tbody td {
+	padding: 4px;
+	vertical-align: top;
+}
+table thead tr th.id {
+	width: 47px;
+}
+table thead tr th.sev {
+	width: 57px;
+}
+table thead tr th.pri {
+	width: 52px;
+}
+table.tablesorter thead tr .headerSortUp {
+	background-image: url("img/asc.gif");
+}
+table.tablesorter thead tr .headerSortDown {
+	background-image: url("img/desc.gif");
+}
+table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
+background-color: #8dbdd8;
+}
+

@@ -1,5 +1,8 @@
-from flask_sqlalchemy import SQLAlchemy
 from relmandash import app
+from flask.ext.sqlalchemy import SQLAlchemy
+from sqlalchemy import Sequence, ForeignKey
+
+db = SQLAlchemy(app)
 
 class User(db.Model):
     __tablename__ = 'Users'
@@ -9,10 +12,11 @@ class User(db.Model):
     salt = db.Column(db.String(50), nullable=False)
     default_view = db.Column(db.String(50))
 
-    def __init__(self, email, _hash, salt):
+    def __init__(self, email, _hash, salt, view):
         self.email = email
         self.hash = _hash
         self.salt = salt
+        self.default_view = view
         
     def __repr__(self):
         return '<User %r>' % self.email

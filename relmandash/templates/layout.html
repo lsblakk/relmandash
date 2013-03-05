@@ -1,0 +1,92 @@
+<!doctype html>
+<head>
+<title>Release Tracking Dashboard</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}"/>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/lightness/jquery-ui-1.10.0.custom.css') }}"/>
+<link rel="stylesheet" href="//www.mozilla.org/tabzilla/media/css/tabzilla.css"/>
+<script type=text/javascript src="{{ url_for('static', filename='js/jquery-1.9.1.min.js') }}"></script>
+<script type=text/javascript src="{{ url_for('static', filename='js/jquery-ui-1.10.0.custom.min.js') }}"></script>
+<script type=text/javascript src="//www.mozilla.org/tabzilla/media/js/tabzilla.js"></script>
+<script type=text/javascript src="{{ url_for('static', filename='js/jquery.tablesorter.js') }}"></script>
+<script type=text/javascript src="{{ url_for('static', filename='js/login.js') }}"></script>
+<script type=text/javascript src="{{ url_for('static', filename='js/sorters.js') }}"></script>
+<script type=text/javascript src="{{ url_for('static', filename='js/keywords.js') }}"></script>
+<script type=text/javascript>
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
+<script>
+    $(function() {
+        resetTags();
+        colorizeTags();
+        activateTags();
+    });
+</script>
+</head>
+<body>
+<a href="http://www.mozilla.org/" id="tabzilla">mozilla</a>
+<span class="user">
+    {% if session.logged_in %}
+        <p>logged in as {{ session.username }} | <a href="">Profile</a> | <a href="{{ url_for('logout') }}">Logout</a></p>
+    {% else %}
+    <div id="form_login" title="Login Form">
+        <p class="validateTips">All form fields are required.</p>
+        <form id="login" action="{{ url_for('login') }}" method="post">
+            <fieldset>
+                <p><label for="email">Bugzilla Email</label>
+                <input type="text" name="email" id="email" value="" class="text ui-widget-content ui-corner-all" /></p>
+                <p><label for="password">Password</label><br/>
+                <input type="password" name="password" id="password" value="" class="text ui-widget-content ui-corner-all" /></p>
+            </fieldset>
+        </form>
+    </div>
+    <button id="btn_login">Login</button>
+    <button id="btn_signup">Sign up</button>
+    {% endif %}
+    </span>
+<div class="header">
+    <h1>Release Tracking Dashboard 
+    {% if email %} - {{email}} {% endif %}
+    {% if product %} - {{product}} {% endif %}
+    {% if component %}/General {% endif %}</h1>
+</div>
+<div class="colmask threecol">
+    <div class="colmid">
+        <div class="colleft">
+            <div class="col1">
+                {% if error %}
+                    <p class="error">Error: {{ error }}</p>
+                {% endif %}
+                {% if message %}
+                    <p>{{ message }}</p>
+                {% endif %}
+                {% block body %}{% endblock %}
+            </div>
+            <div class="col2">
+                {% if email %}
+                    <p>viewing bugs assigned to:</p>
+                    <h3>{{email}}</h3>
+                {% endif %}
+            </div>
+            <div class="col3">
+                {% if keywords %}
+                <h3>Keywords</h3>
+                    <form>
+                    Tag method: 
+                    <select id="tagmethod" onchange="resetTags()">
+                        <option>Highlight</option>
+                        <option>Filter</option>
+                    </select>
+                    {% for keyword in keywords%}
+                        <p id="{{keyword}}"><input type="checkbox" name="keywords" value="{{keyword}}"/><tag id="{{keyword}}">{{ keyword }}</tag></p>
+                    {% endfor %}
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="footer">
+</div>
+</body>
+
