@@ -64,7 +64,7 @@ def index():
     return render_template('index.html', message=message)
     
 def clever_function():
-    bmo = BMOAgent('liannelee719@hotmail.com', 'Le3Ch0o!Tz3')
+    bmo = BMOAgent('', '')
     bug = bmo.get_bug('80000')
     return bug
     
