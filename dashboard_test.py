@@ -28,7 +28,7 @@ class DashboardTestCase(unittest.TestCase):
     def logout(self):
         return self.app.get('/logout', follow_redirects=True)
         
-    '''def test_login_logout(self):
+    def test_login_logout(self):
         rv = self.login('admin', 'default')
         assert 'You were logged in' in rv.data
         rv = self.logout()
@@ -38,7 +38,7 @@ class DashboardTestCase(unittest.TestCase):
         rv = self.login('admin', 'defaultx')
         assert 'Invalid password' in rv.data
         
-    def test_messages(self):
+    '''def test_messages(self):
         self.login('admin', 'default')
         rv = self.app.post('/add', data=dict(
             title='<Hello>',
