@@ -1,7 +1,6 @@
 from __future__ import with_statement
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash, _app_ctx_stack, jsonify
-from flask.ext.sqlalchemy import SQLAlchemy
 from bugzilla.agents import BMOAgent
 from bugzilla.utils import get_credentials
 import re
@@ -11,6 +10,7 @@ from dashboard.products import *
 from utils import *
 import os
 import hashlib
+from flask.ext.sqlalchemy import SQLAlchemy
 
 # configuration
 DATABASE = '/tmp/flaskr.db'
