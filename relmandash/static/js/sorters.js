@@ -1,3 +1,18 @@
+function sortTables(tab) {
+    var selected = $("#"+tab+"_sort option:selected").text();
+    if (selected == 'Severity') {
+        sortSeverity(tab);
+    } else if (selected == 'Security') {
+        sortSecurity(tab);
+    } else if (selected == 'Priority') {
+        sortNormal(tab, '.priority', 'desc');
+    } else if (selected == 'ID ascending') {
+        sortNormal(tab, '.id', 'asc');
+    } else if (selected == 'ID descending') {
+        sortNormal(tab, '.id', 'desc');
+    }
+}
+
 function sortSeverity(table){
     var severity = ['blocker', 'critical', 'major', 'normal', 'minor', 'trivial', 'enhancement', ''];
     customSort(table, severity, '.severity', 'asc');
@@ -9,7 +24,6 @@ function sortSecurity(table){
 }
 
 function sortNormal(table, _class, order) {
-    alert($('.'+table+' tbody').length);
     $('.'+table+' tbody').each(function(index, list) {
         var listItems = $(list).children('tr');
         if (listItems.length > 1) {
@@ -29,7 +43,6 @@ function sortNormal(table, _class, order) {
 }
 
 function customSort(table, weighting, _class, order) {
-    alert($('.'+table+' tbody').length);
     $('.'+table+' tbody').each(function(index, list) {
         var listItems = $(list).children('tr');
         if (listItems.length > 1) {

@@ -27,7 +27,8 @@
 <a href="http://www.mozilla.org/" id="tabzilla">mozilla</a>
 <span class="user">
     {% if session.logged_in %}
-        <p>logged in as {{ session.username }} | <a href="">Profile</a> | <a href="{{ url_for('logout') }}">Logout</a></p>
+        <p>logged in as <a href="{{ url_for('profile', email=session.user.email) }}">{{ session.user.email }}</a> | 
+        <a href="{{ url_for('logout') }}">Logout</a></p>
     {% else %}
     <div id="form_login" title="Login Form">
         <p class="validateTips">All form fields are required.</p>
@@ -40,8 +41,8 @@
             </fieldset>
         </form>
     </div>
-    <button id="btn_login">Login</button>
-    <button id="btn_signup">Sign up</button>
+    <p><button id="btn_login">Login</button> | 
+    <a href="{{ url_for('signup') }}">Sign Up</a></p>
     {% endif %}
     </span>
 <div class="header">
@@ -69,6 +70,7 @@
                 {% endif %}
             </div>
             <div class="col3">
+                {% set keywords = getKeywords(buglist) %}
                 {% if keywords %}
                 <h3>Keywords</h3>
                     <form>

@@ -1,3 +1,6 @@
+'''
+    Reference: http://pythonhosted.org/Flask-SQLAlchemy/quickstart.html
+'''
 from relmandash import app
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy import Sequence, ForeignKey
@@ -7,16 +10,14 @@ db = SQLAlchemy(app)
 class User(db.Model):
     __tablename__ = 'Users'
     id = db.Column(db.Integer, Sequence('user_id_seq'), primary_key=True)
-    email = db.Column(db.String(50), nullable=False)
-    hash = db.Column(db.String(50), nullable=False)
-    salt = db.Column(db.String(50), nullable=False)
-    default_view = db.Column(db.String(50))
+    email = db.Column(db.String(100), nullable=False)
+    hash = db.Column(db.String(100), nullable=False)
+    salt = db.Column(db.String(100), nullable=False)
 
-    def __init__(self, email, _hash, salt, view):
+    def __init__(self, email, _hash, salt):
         self.email = email
         self.hash = _hash
         self.salt = salt
-        self.default_view = view
         
     def __repr__(self):
         return '<User %r>' % self.email
@@ -37,7 +38,8 @@ class Component(db.Model):
     __tablename__ = 'Components'
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String, nullable=False)
-    product = db.Column(None, ForeignKey('Products.id'), nullable=False)
+    product_id = db.Column(None, ForeignKey('Products.id'), nullable=False)
+    product = db.relationship('Product', backref=db.backref('components', lazy='dynamic'))
     
     def __init__(self, id, description, product):
         self.id = id
@@ -49,48 +51,44 @@ class Component(db.Model):
 
 class View(db.Model):
     __tablename__ = 'Views'
-    id = db.Column(db.Integer, Sequence('user_id_seq'), primary_key=True)
-    description = db.Column(db.String(100), nullable=False)
+    id = db.Column(db.Integer, Sequence('view_id_seq'), primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text)
+    default = db.Column(db.Boolean, nullable=False)
+    owner_id = db.Column(None, ForeignKey('Users.id'), nullable=False)
+    owner = db.relationship('User', backref=db.backref('views', lazy='dynamic'))
     
-    def __init__(self, id, description):
-        self.id = id
+    def __init__(self, name, description, default, owner):
+        self.name = name
         self.description = description
+        self.default = default
+        self.owner = owner
         
     def __repr__(self):
-        return '<View %r>' % self.description
+        return '<View %r owned by %r>' % (self.description, self.owner_id)
         
 class ViewComponent(db.Model):
     __tablename__ = 'View_Components'
-    view = db.Column(None, ForeignKey('Views.id'), primary_key=True)
-    component = db.Column(None, ForeignKey('Components.id'), primary_key=True)
+    view_id = db.Column(None, ForeignKey('Views.id'), primary_key=True)
+    component_id = db.Column(None, ForeignKey('Components.id'), primary_key=True)
+    view = db.relationship('View', backref=db.backref('view_components', lazy='dynamic'))
     
-    def __init__(self, view, component):
+    def __init__(self, view, component_id):
         self.view = view
-        self.component = component
+        self.component_id = component_id
         
     def __repr__(self):
         return '<View %r with Component %r>' % (self.view, self.component)
 
 class ViewMember(db.Model):
     __tablename__ = 'View_Members'
-    view = db.Column(None, ForeignKey('Views.id'), primary_key=True)
-    member = db.Column(None, ForeignKey('Users.id'), primary_key=True)
+    view_id = db.Column(None, ForeignKey('Views.id'), primary_key=True)
+    email = db.Column(db.String(100), nullable=False, primary_key=True)
+    view = db.relationship('View', backref=db.backref('view_members', lazy='dynamic'))
     
-    def __init__(self, view, member):
+    def __init__(self, view, email):
         self.view = view
-        self.member = member
+        self.email = email
         
     def __repr__(self):
         return '<View %r with Member %r>' % (self.view, self.member)
-
-class ViewOwner(db.Model):
-    __tablename__ = 'View_Owners'
-    view = db.Column(None, ForeignKey('Views.id'), primary_key=True)
-    owner = db.Column(None, ForeignKey('Users.id'), primary_key=True)
-    
-    def __init__(self, view, owner):
-        self.view = view
-        self.owner = owner
-        
-    def __repr__(self):
-        return '<View %r with Owner %r>' % (self.view, self.owner)

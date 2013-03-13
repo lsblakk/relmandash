@@ -2,6 +2,7 @@ import os
 import relmandash
 import unittest
 import tempfile
+from relmandash.dashboard.products import ComponentsTracker
 
 class DashboardTestCase(unittest.TestCase):
 
@@ -9,7 +10,9 @@ class DashboardTestCase(unittest.TestCase):
         self.db_fd, relmandash.app.config['DATABASE'] = tempfile.mkstemp()
         relmandash.app.config['TESTING'] = True
         self.app = relmandash.app.test_client()
+        relmandash.db.drop_all()
         relmandash.db.create_all()
+        ct = ComponentsTracker(relmandash.db)
 
     def tearDown(self):
         os.close(self.db_fd)
@@ -28,7 +31,7 @@ class DashboardTestCase(unittest.TestCase):
     def logout(self):
         return self.app.get('/logout', follow_redirects=True)
         
-    def test_login_logout(self):
+    '''def test_login_logout(self):
         rv = self.login('admin', 'default')
         assert 'You were logged in' in rv.data
         rv = self.logout()
@@ -38,7 +41,7 @@ class DashboardTestCase(unittest.TestCase):
         rv = self.login('admin', 'defaultx')
         assert 'Invalid password' in rv.data
         
-    '''def test_messages(self):
+    def test_messages(self):
         self.login('admin', 'default')
         rv = self.app.post('/add', data=dict(
             title='<Hello>',
