@@ -367,6 +367,8 @@ def getToFollowBugs(emails):
 """
 def view_individual(email):
     error = ''
+    mainlist=[]
+    followlist=[]
     pattern = re.compile('^[\w._%+-]+@[\w.-]+\.[A-Za-z]{2,6}$')
     if pattern.match(email):
         try:

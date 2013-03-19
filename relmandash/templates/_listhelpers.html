@@ -1,0 +1,100 @@
+{% macro printListRow(tab, bug) -%}
+    <script>
+        var row = $('<tr/>', {
+            'class': '{{ bug.id }} {{ bug.severity}}',
+            html:    '<td><a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">{{bug.id}} {{bug.summary|truncate(80)}}</a><br/><p class="modified">last modified: {{bug.last_change_time}}</p></td>'
+        });
+        row.append('<span class="hidden id">{{bug.id}}</span>');
+        row.append('<span class="hidden severity">{{bug.severity}}</span>');
+        row.append('<span class="hidden priority">{{bug.priority}}</span>');
+        $('div#{{tab}}_{{bug.component|replace(" ","_")}} > table > tbody').append(row);
+        if ("{{bug.id}}" == "849658") {
+            alert('found');
+        }
+    </script>
+    {% for group in bug.groups %}
+        <script>
+        $("tr.{{bug.id}}").addClass("{{group.name}}");
+        $("tr.{{bug.id}}").append('<span class="hidden security">{{group.name}}</span>');
+        </script>
+    {% endfor %}
+    {% for keyword in bug.keywords %}
+        <script>$(".{{bug.id}}").addClass("{{keyword}}");</script>
+    {% endfor %}
+{%- endmacro %}
+
+{% macro printComponentTab(components, bugs, tab, header) %}
+    {% if bugs %}
+        <script>
+            $('#ul_tabs').append('<li><a href="#tab_{{tab}}" onclick="resetTags();">{{tab}}  <span class="length"></a></li>');
+            var tab = $('#tab_{{tab}}');
+            tab.append('<h3>{{ header }} <span class="length"></span></h3>');
+            tab.append('Sort by:');
+            var select = $('<select id="{{tab}}_sort" onchange="sortTables(\'{{tab}}\');"/>');
+            $("<option />", {text: 'Severity'}).appendTo(select);
+            $("<option />", {text: 'Security'}).appendTo(select);
+            $("<option />", {text: 'Priority'}).appendTo(select);
+            $("<option />", {text: 'ID ascending'}).appendTo(select);
+            $("<option />", {text: 'ID descending'}).appendTo(select);
+            tab.append(select);
+        </script>
+        {% if components %}
+            {% for comp in components %}
+            <script>
+                var tab = $('#tab_{{tab}}');
+                
+                var component_div = $('<div id="{{tab}}_{{comp|replace(" ","_")}}" class="components"/>');
+                
+                component_div.append('<h4>{{comp}}  <span class="length"></h4>');
+                var table = $('<table class="{{tab}}" />');
+                table.append('<tbody />');
+                component_div.append(table);
+                tab.append(component_div);
+                if ("{{tab}}" == "unassigned") {
+                    alert('{{comp}}');
+                }
+            </script>
+            {% endfor %}
+        {% endif %}
+        {% for bug in bugs %}
+            {{ printListRow(tab, bug) }}
+        {% endfor %}
+    {% endif %}
+{%- endmacro %}
+
+{% macro printTableRow(tab, bug) -%}
+    <script>
+        var row = $('<tr/>', {
+            'class': '{{ bug.id }} {{ bug.severity}}',
+            html:    '<td><a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">{{bug.id}}</a></td><td>{{bug.component}}</td><td>{{bug.severity}}</td><td>{{bug.priority}}</td><td>{{bug.summary|truncate(80)}}</td>'
+        });
+        $('#tab_{{tab}} > table > tbody').append(row);
+    </script>
+    {% for group in bug.groups %}
+        <script>
+        $("tr.{{bug.id}}").addClass("{{group.name}}");
+        </script>
+    {% endfor %}
+    {% for keyword in bug.keywords %}
+        <script>$(".{{bug.id}}").addClass("{{keyword}}");</script>
+    {% endfor %}
+{%- endmacro %}
+
+{% macro printTab(bugs, tab, header) %}
+    {% if bugs %}
+        <script>
+            $('#ul_tabs').append('<li><a href="#tab_{{tab}}" onclick="resetTags();">{{tab}} ({{bugs|length}})</a></li>');
+            var tab = $('#tab_{{tab}}');
+            tab.append('<h3>{{ header }} ({{ bugs|length }})</h3>');
+            var table = $('<table />', {
+                'class': '{{tab}} tablesorter',
+                html:    '<thead><tr><th class="id">ID</th><th class="comp">Component</th><th class="sev">Severity</th><th class="pri">Priority</th><th>Summary</th></tr></thead>'
+            });
+            table.append('<tbody />');
+            tab.append(table);
+        </script>
+        {% for bug in bugs %}
+            {{ printTableRow(tab, bug) }}
+        {% endfor %}
+    {% endif %}
+{%- endmacro %}

@@ -1,0 +1,112 @@
+{% extends "layout.html" %}
+{% block body %}
+    <div id="tabs">
+        <ul id="ul_tabs">
+            <li><a href="#tab_main"">Main <span class="length"></span></a></li>
+            {%if view.components%}
+            <li><a href="#tab_nobody"">Unassigned <span class="length"></span></a></li>
+            {%endif%}
+            <li><a href="#tab_info"">Needs info <span class="length"></span></a></li>
+            {%if view.members%}
+            <li><a href="#tab_nominate"">To nominate <span class="length"></span></a></li>
+            <li><a href="#tab_approve"">To approve <span class="length"></span></a></li>
+            <li><a href="#tab_uplift"">To uplift <span class="length"></span></a></li>
+            {%endif%}
+        </ul>
+        Sort by:
+        <select id="sort" onchange="sortTables();">
+            <option>Severity</option>
+            <option>Security</option>
+            <option>Priority</option>
+            <option>ID ascending</option>
+            <option>ID descending</option>
+        </select>
+        <div id="tab_main">
+            <div id="tab_beta" class="bugs_display">
+                <h3>Tracked Beta Bugs <span class="length"></span></h3>
+            </div>
+            <div id="tab_aurora" class="bugs_display">
+                <h3>Tracked Aurora Bugs <span class="length"></span></h3>
+            </div>
+            <div id="tab_esr" class="bugs_display">
+                <h3>Tracked ESR Bugs <span class="length"></span></h3>
+            </div>
+        </div>
+        <div id="tab_nobody" class="bugs_display">
+        </div>
+        <div id="tab_info" class="bugs_display">
+        </div>
+        <div id="tab_nominate" class="bugs_display">
+        </div>
+        <div id="tab_approve" class="bugs_display">
+        </div>
+        <div id="tab_uplift" class="bugs_display">
+        </div>
+    </div>
+    {% from "_teamhelpers.html" import printEmptyTables %}
+    {% from "_teamhelpers.html" import printBugs %}
+    {{ printEmptyTables() }}
+    {% for product, components in prodcompmap.iteritems() %}
+        {% set buglist = getProdCompBugs(product, components) %}
+        {% set beta = getTrackedBugs(session.vt.beta, buglist) %}
+        {% if beta %}
+            {{ printBugs(beta, 'beta') }}
+        {% endif %}
+        {% set aurora = getTrackedBugs(session.vt.aurora, buglist) %}
+        {% if aurora %}
+            {{ printBugs(aurora, 'aurora') }}
+        {% endif %}
+        {% set unassigned = getUnassignedBugs(buglist) %}
+        {% if unassigned %}
+            {{ printBugs(unassigned, 'nobody') }}
+        {% endif %}
+        {% set info = getNeedsInfoBugs(buglist) %}
+        {% if info %}
+            {{ printBugs(info, 'info') }}
+        {% endif %}
+        {% set esr = getTrackedBugs(session.vt.esr, buglist) %}
+        {% if esr %}
+            {{ printBugs(esr, 'esr') }}
+        {% endif %}
+    {% endfor %}
+    {% if members %}
+        {% set buglist = getAssignedBugs(members) %}
+        {% set beta = getTrackedBugs(session.vt.beta, buglist) %}
+        {% if beta %}
+            {{ printBugs(beta, 'beta') }}
+        {% endif %}
+        {% set aurora = getTrackedBugs(session.vt.aurora, buglist) %}
+        {% if aurora %}
+            {{ printBugs(aurora, 'aurora') }}
+        {% endif %}
+        {% set esr = getTrackedBugs(session.vt.esr, buglist) %}
+        {% if esr %}
+            {{ printBugs(esr, 'esr') }}
+        {% endif %}
+        
+        {% set info = getNeedsInfoBugs(emails=members, bmo=session.bmo) %}
+        {% if info %}
+            {{ printBugs(info, 'info') }}
+        {% endif %}
+        
+        {% set buglist = getToFollowBugs(members) %}
+        {% set nominate = getToNominateBugs(session.vt.beta, session.vt.aurora, buglist) %}
+        {% if nominate %}
+            {{ printBugs(nominate, 'nominate') }}
+        {% endif %}
+        {% set approve = getToApproveBugs(buglist) %}
+        {% if approve %}
+            {{ printBugs(approve, 'approve') }}
+        {% endif %}
+        {% set uplift = getToUpliftBugs(session.vt.beta, session.vt.aurora, buglist) %}
+        {% if uplift %}
+            {{ printBugs(uplift, 'uplift') }}
+        {% endif %}
+    {% endif %}
+    <script>
+        $(function() {
+            $("#tabs").tabs();
+            recalculateLength();
+        });
+    </script>
+{% endblock %}
