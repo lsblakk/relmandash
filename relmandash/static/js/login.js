@@ -1,6 +1,6 @@
 $(function() {
-    var email = $( "#email" ),
-        password = $( "#password" ),
+    var email = $( "#loginemail" ),
+        password = $( "#loginpassword" ),
         allFields = $( [] ).add( email ).add( password ),
         tips = $( ".validateTips" );
     function updateTips( t ) {

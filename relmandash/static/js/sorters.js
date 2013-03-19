@@ -1,30 +1,30 @@
-function sortTables(tab) {
-    var selected = $("#"+tab+"_sort option:selected").text();
+function sortTables() {
+    var selected = $("#sort option:selected").text();
     if (selected == 'Severity') {
-        sortSeverity(tab);
+        sortSeverity();
     } else if (selected == 'Security') {
-        sortSecurity(tab);
+        sortSecurity();
     } else if (selected == 'Priority') {
-        sortNormal(tab, '.priority', 'desc');
+        sortNormal('.priority', 'desc');
     } else if (selected == 'ID ascending') {
-        sortNormal(tab, '.id', 'asc');
+        sortNormal('.id', 'asc');
     } else if (selected == 'ID descending') {
-        sortNormal(tab, '.id', 'desc');
+        sortNormal('.id', 'desc');
     }
 }
 
-function sortSeverity(table){
+function sortSeverity(){
     var severity = ['blocker', 'critical', 'major', 'normal', 'minor', 'trivial', 'enhancement', ''];
-    customSort(table, severity, '.severity', 'asc');
+    customSort(severity, '.severity', 'asc');
 }
 
-function sortSecurity(table){
+function sortSecurity(){
     var security = ['core-security', 'mozilla-corporation-confidential', ''];
-    customSort(table, security, '.security', 'asc');
+    customSort(security, '.security', 'asc');
 }
 
-function sortNormal(table, _class, order) {
-    $('.'+table+' tbody').each(function(index, list) {
+function sortNormal(_class, order) {
+    $('tbody').each(function(index, list) {
         var listItems = $(list).children('tr');
         if (listItems.length > 1) {
             $(list).remove('tr');
@@ -42,8 +42,8 @@ function sortNormal(table, _class, order) {
     });
 }
 
-function customSort(table, weighting, _class, order) {
-    $('.'+table+' tbody').each(function(index, list) {
+function customSort(weighting, _class, order) {
+    $('tbody').each(function(index, list) {
         var listItems = $(list).children('tr');
         if (listItems.length > 1) {
             $(list).remove('tr');

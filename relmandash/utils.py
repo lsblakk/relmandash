@@ -1,3 +1,5 @@
+from dashboard.options import getNeedsInfo
+
 def getTrackedBugs(version=0,buglist=[]):
     tracked_bugs = []
     if version != 0 and buglist != []:
@@ -95,19 +97,27 @@ def getToUpliftBugs(beta,aurora,buglist=[]):
             pass
     return to_uplift
     
-def getNeedsInfoBugs(buglist):
+def getNeedsInfoBugs(buglist=[], emails='', bmo=None):
     needs_info = []
-    for bug in buglist:
-        for flag in bug.flags:
-            if flag.name == 'needinfo' and bug not in needs_info:
-                needs_info.append(bug)
+    if buglist:
+        for bug in buglist:
+            for flag in bug.flags:
+                if flag.name == 'needinfo' and bug not in needs_info:
+                    needs_info.append(bug)
+    elif emails != '':
+        needsInfoOptions = getNeedsInfo(emails)
+        needs_info = bmo.get_bug_list(needsInfoOptions)
     return needs_info
     
 def getUnassignedBugs(buglist):
+    print 'unassigned'
     unassigned = []
     for bug in buglist:
-        if bug.assigned_to == 'nobody@mozilla.org' or bug.assigned_to == 'general':
+        print bug.id
+        print bug.assigned_to.name
+        if bug.assigned_to.name == 'nobody@mozilla.org' or bug.assigned_to.name == 'general':
             unassigned.append(bug)
+            print 'nobody'
     return unassigned
 
 def getKeywords(buglist):

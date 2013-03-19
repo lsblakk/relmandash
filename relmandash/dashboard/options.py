@@ -1,7 +1,7 @@
-def getAssignedOptions(email):
+def getAssignedOptions(emails):
     options = {
-        'email1':            email,
-        'email1_type':       'equals',
+        'email1':            emails,
+        'email1_type':       'contains_any_words',
         'email1_assigned_to':1,
         'order':             'Last Changed',
         'field0-0-0':        'status',
@@ -20,10 +20,10 @@ def getAssignedOptions(email):
     }
     return options
     
-def getToFollowUp(email, beta, aurora):
+def getToFollowUp(emails, beta, aurora):
     options = {
-        'email1':           email,
-        'email1_type':      'equals',
+        'email1':           emails,
+        'email1_type':      'contains_any_words',
         'email1_assigned_to':        1,
         'order':            'Last Changed',
         'negate0':          1,
@@ -55,19 +55,18 @@ def getToFollowUp(email, beta, aurora):
     }
     return options
     
-def getNeedsInfo(email):
+def getNeedsInfo(emails):
     options = {
         'field0-0-0':       'requestees.login_name',
-        'type0-0-0':        'substring',
-        'value0-0-0':       email,
+        'type0-0-0':        'contains_any_words',
+        'value0-0-0':       emails,
         'include_fields':   '_all',
     }
     return options
     
-def getProdComp(product, component, beta, aurora, esr):
+def getProdComp(product, components, beta, aurora, esr):
     options = {
         'product':           product,
-        'component':         component,
         'order':             'Last Changed',
         'field0-0-0':        'status',
         'type0-0-0':         'equals',
@@ -90,6 +89,9 @@ def getProdComp(product, component, beta, aurora, esr):
         'field0-1-2':        'cf_tracking_firefox' + str(esr),
         'type0-1-2':         'equals',
         'value0-1-2':        '+',
+        'field1-0-0':        'component',
+        'type1-0-0':         'contains_any_words',
+        'value1-0-0':        components,
         'include_fields':    '_all',
     }
     return options

@@ -1,57 +1,53 @@
 {% extends "layout.html" %}
 {% block body %}
+    <div id="tabs">
+        <ul id="ul_tabs">
+        </ul>
+        <div id="tab_beta">
+        </div>
+        <div id="tab_aurora">
+        </div>
+        <div id="tab_unassigned">
+        </div>
+        <div id="tab_info">
+        </div>
+        <div id="tab_esr">
+        </div>
+    </div>
+    {% set components = getComponents(buglist) %}
+    {% from "_listhelpers.html" import printComponentTab %}
+    {% set beta = getTrackedBugs(session.vt.beta, buglist) %}
+    {% if beta %}
+        {{ printComponentTab(components, beta, 'beta', 'Tracked Beta Bugs') }}
+    {% endif %}
+    {% set aurora = getTrackedBugs(session.vt.aurora, buglist) %}
+    {% if aurora %}
+        {{ printComponentTab(components, aurora, 'aurora', 'Tracked Aurora Bugs') }}
+    {% endif %}
+    {% set unassigned = getUnassignedBugs(buglist) %}
+    {% if unassigned %}
+        {{ printComponentTab(components, unassigned, 'unassigned', 'Unassigned Bugs') }}
+    {% endif %}
+    {% set info = getNeedsInfoBugs(buglist) %}
+    {% if info %}
+        {{ printComponentTab(components, info, 'info', 'Bugs that need additional information') }}
+    {% endif %}
+    {% set esr = getTrackedBugs(session.vt.esr, buglist) %}
+    {% if esr %}
+        {{ printComponentTab(components, esr, 'esr', 'Tracked ESR Bugs') }}
+    {% endif %}
     <script type=text/javascript>
         $(function() {
             $("#tabs").tabs();
-            $(".components").each(function(index, compdiv) {
+            recalculateLength();
+            /*$(".components").each(function(index, compdiv) {
                 if ($(compdiv).find('tbody').children().length ==  0) {
                     $(compdiv).remove();
                 } else {
                     var count = $(compdiv).find('h4').text() + ' (' + $(compdiv).find('tbody').children().length + ')';
                     $(compdiv).find('h4').text(count);
                 }
-            });
+            });*/
         });
     </script>
-    <div id="tabs">
-        <ul id="ul_tabs">
-            {% set beta = getTrackedBugs(session.vt.beta, buglist) %}
-            {% if beta %}
-                <li><a href="#tab_beta" onclick="resetTags();">Beta ({{beta|length}})</a></li>
-            {% endif %}
-            {% set aurora = getTrackedBugs(session.vt.aurora, buglist) %}
-            {% if aurora %}
-                <li><a href="#tab_aurora" onclick="resetTags();">Aurora ({{aurora|length}})</a></li>
-            {% endif %}
-            {% set unassigned = getUnassignedBugs(buglist) %}
-            {% if unassigned %}
-                <li><a href="#tab_nobody" onclick="resetTags();">Unassigned ({{unassigned|length}})</a></li>
-            {% endif %}
-            {% set info = getNeedsInfoBugs(buglist) %}
-            {% if info %}
-                <li><a href="#tab_info" onclick="resetTags();">Needs info ({{info|length}})</a></li>
-            {% endif %}
-            {% set esr = getTrackedBugs(session.vt.esr, buglist) %}
-            {% if esr %}
-                <li><a href="#tab_esr" onclick="resetTags();">ESR ({{esr|length}})</a></li>
-            {% endif %}
-        </ul>
-        {% set components = getComponents(buglist) %}
-        {% from "_listhelpers.html" import printTab %}
-        <div id="tab_beta">
-            {{ printTab(components, beta, 'beta', 'Tracked Beta Bugs') }}
-        </div>
-        <div id="tab_aurora">
-            {{ printTab(components, aurora, 'aurora', 'Tracked Aurora Bugs') }}
-        </div>
-        <div id="tab_nobody">
-            {{ printTab(components, unassigned, 'nobody', 'Unassigned Bugs') }}
-        </div>
-        <div id="tab_info">
-            {{ printTab(components, info, 'info', 'Bugs that need additional information') }}
-        </div>
-        <div id="tab_esr">
-            {{ printTab(components, esr, 'esr', 'Tracked ESR Bugs') }}
-        </div>
-    </div>
 {% endblock %}

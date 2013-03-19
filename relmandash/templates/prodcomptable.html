@@ -1,69 +1,44 @@
 {% extends "layout.html" %}
 {% block body %}
-<script type=text/javascript>
-    $(function() {
-        $(".tablesorter").tablesorter();
-        $("#tabs").tabs();
-    });
-</script>
-{% macro printTab(bugs, tab, header) -%}
-    {% if bugs %}
-        <h3>{{ header }} ({{ bugs|length }})</h3>
-        <table id="table_{{tab}}" class="tablesorter">
-        <thead>
-            <tr>
-                <th class="id">ID</th>
-                <th class="comp">Component</th>
-                <th class="sev">Severity</th>
-                <th class="pri">Priority</th>
-                <th>Summary</th>
-            </tr>
-            </thead>
-            <tbody>
-        {% for bug in bugs %}
-            <tr class="{{ bug.id }} {{bug.severity}}">
-            {% for keyword in bug.keywords %}
-                <script>$(".{{bug.id}}").addClass("{{keyword}}");</script>
-            {% endfor %}
-            {% for group in bug.groups %}
-                <script>$(".{{bug.id}}").addClass("{{group.name}}");</script>
-            {% endfor %}
-                <td>
-                    <a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">
-                        {{bug.id}}</a>
-                </td>
-                <td>{{bug.component}}</td>
-                <td>{{bug.severity}}</td>
-                <td>{{bug.priority}}</td>
-                <td>{{bug.summary}}</td>
-            </tr>
-        {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
-{%- endmacro %}
     <div id="tabs">
         <ul id="ul_tabs">
-            {% if beta %}<li><a href="#tab_beta" onclick="resetTags();">Beta ({{beta|length}})</a></li>{% endif %}
-            {% if aurora %}<li><a href="#tab_aurora" onclick="resetTags();">Aurora ({{aurora|length}})</a></li>{% endif %}
-            {% if unassigned %}<li><a href="#tab_nobody" onclick="resetTags();">Unassigned ({{unassigned|length}})</a></li>{% endif %}
-            {% if info %}<li><a href="#tab_info" onclick="resetTags();">Needs info ({{info|length}})</a></li>{% endif %}
-            {% if esr %}<li><a href="#tab_esr" onclick="resetTags();">ESR ({{esr|length}})</a></li>{% endif %}
         </ul>
         <div id="tab_beta">
-            {{ printTab(beta, 'beta', 'Tracked Beta Bugs') }}
         </div>
         <div id="tab_aurora">
-            {{ printTab(aurora, 'aurora', 'Tracked Aurora Bugs') }}
         </div>
         <div id="tab_nobody">
-            {{ printTab(unassigned, 'nobody', 'Unassigned Bugs') }}
         </div>
         <div id="tab_info">
-            {{ printTab(info, 'info', 'Bugs that need additional information') }}
         </div>
         <div id="tab_esr">
-            {{ printTab(esr, 'esr', 'Tracked ESR Bugs') }}
         </div>
     </div>
+    {% from "_listhelpers.html" import printTab %}
+    {% set beta = getTrackedBugs(session.vt.beta, buglist) %}
+    {% if beta %}
+        {{ printTab(beta, 'beta', 'Tracked Beta Bugs') }}
+    {% endif %}
+    {% set aurora = getTrackedBugs(session.vt.aurora, buglist) %}
+    {% if aurora %}
+        {{ printTab(aurora, 'aurora', 'Tracked Aurora Bugs') }}
+    {% endif %}
+    {% set unassigned = getUnassignedBugs(buglist) %}
+    {% if unassigned %}
+        {{ printTab(unassigned, 'nobody', 'Unassigned Bugs') }}
+    {% endif %}
+    {% set info = getNeedsInfoBugs(buglist) %}
+    {% if info %}
+        {{ printTab(info, 'info', 'Bugs that need additional information') }}
+    {% endif %}
+    {% set esr = getTrackedBugs(session.vt.esr, buglist) %}
+    {% if esr %}
+        {{ printTab(esr, 'esr', 'Tracked ESR Bugs') }}
+    {% endif %}
+    <script type=text/javascript>
+        $(function() {
+            $("#tabs").tabs();
+            $(".tablesorter").tablesorter();
+        });
+    </script>
 {% endblock %}

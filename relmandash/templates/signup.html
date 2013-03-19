@@ -8,38 +8,44 @@
                 <h3>Step 1: Set up account</h3>
                 <p><label for="email">Bugzilla Email</label><br/>
                 <input type="text" name="email" id="email" value="" class="text ui-widget-content ui-corner-all" /></p>
-                <p><label for="password">Password</label><br/>
+                <p><label for="password">Bugzilla Password</label><br/>
                 <input type="password" name="password" id="password" value="" class="text ui-widget-content ui-corner-all" /></p>
-                <p><label for="confirmpassword">Re-enter Password</label><br/>
+                <p><label for="confirmpassword">Re-enter Bugzilla Password</label><br/>
                 <input type="password" name="confirmpassword" id="confirmpassword" value="" class="text ui-widget-content ui-corner-all" /></p>
                 
-                <h3>Step 2: Create a default view</h3>
+                <h3>Step 2: Create a default view (optional)</h3>
+                <p class="modified">If left blank, default view will show user's bugs.</p>
                 <p><label for="viewname">Name of view</label><br/>
-                <input type="text" name="viewname" id="viewname" value="" class="text ui-widget-content ui-corner-all" /></p>
+                <input type="text" name="viewname" id="viewname" value="My default view" class="text ui-widget-content ui-corner-all" /></p>
+                <input type="hidden" name="default" value="yes"/>
                 <p><label for="description">Write a small description of your view</label><br/>
-                <input type="textarea" name="description" id="description" value="" class="text ui-widget-content ui-corner-all" /></p>
+                <textarea cols="50" name="description" id="description"></textarea></p>
                 <p>A view is made up of sub-views that can either show bugs assigned to a contributor or bugs related to a certain product/component.</p>
                 <p>Choose from a list of products and/or components, and/or type in contributors' emails!</p>
                 
                 <p>Products and Components</p>
                 <p class="modified">Select all components to select a product</p>
-                <select multiple id="productselector" name="components">
+                <select multiple size="15" id="productselector" name="components">
                     {% for product in products %}
                          <optgroup label="{{ product.description }}">
-                         {% for component in product.components.all() %}
+                         {% for component in product.components %}
                             <option value="{{ component.id }}">{{ component.description }}</option>
                          {% endfor %}
                          </optgroup>
                     {% endfor %}
                 </select>
                 <p>Contributors</p>
-                <p><input type="text" name="emails" value=""/></p>
+                <p><input id="firstemail" type="text" name="emails" value=""/></p>
                 <div id="addemail"><p>Add another email</p></div>
             </fieldset>
             <input type="submit" value="Submit">
         </form>
     </div>
     <script>
+        $("#email").change(function() {
+            $("#firstemail").val($(this).val());
+            $("#description").val('default view showing bugs for '+$(this).val());
+        });
         $("#addemail").click(function() {
             $(this).before('<p><input type="text" name="emails" value=""/></p>');
         });

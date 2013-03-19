@@ -11,7 +11,7 @@
 <script type=text/javascript src="{{ url_for('static', filename='js/jquery.tablesorter.js') }}"></script>
 <script type=text/javascript src="{{ url_for('static', filename='js/login.js') }}"></script>
 <script type=text/javascript src="{{ url_for('static', filename='js/sorters.js') }}"></script>
-<script type=text/javascript src="{{ url_for('static', filename='js/keywords.js') }}"></script>
+<script type=text/javascript src="{{ url_for('static', filename='js/filter.js') }}"></script>
 <script type=text/javascript>
     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 </script>
@@ -35,9 +35,9 @@
         <form id="login" action="{{ url_for('login') }}" method="post">
             <fieldset>
                 <p><label for="email">Bugzilla Email</label>
-                <input type="text" name="email" id="email" value="" class="text ui-widget-content ui-corner-all" /></p>
+                <input type="text" name="email" id="loginemail" value="" class="text ui-widget-content ui-corner-all" /></p>
                 <p><label for="password">Password</label><br/>
-                <input type="password" name="password" id="password" value="" class="text ui-widget-content ui-corner-all" /></p>
+                <input type="password" name="password" id="loginpassword" value="" class="text ui-widget-content ui-corner-all" /></p>
             </fieldset>
         </form>
     </div>
@@ -48,8 +48,7 @@
 <div class="header">
     <h1>Release Tracking Dashboard 
     {% if email %} - {{email}} {% endif %}
-    {% if product %} - {{product}} {% endif %}
-    {% if component %}/General {% endif %}</h1>
+    {% if product %} - {{product.description}} {% endif %}</h1>
 </div>
 <div class="colmask threecol">
     <div class="colmid">
@@ -64,9 +63,34 @@
                 {% block body %}{% endblock %}
             </div>
             <div class="col2">
-                {% if email %}
-                    <p>viewing bugs assigned to:</p>
+                {% if view %}
+                    {% if view.components %}
+                        <h3>Products</h3>
+                        {% for component in view.components %}
+                            <div id="{{component.description|replace(' ','_')}}" class="filter"><input type="checkbox" name="components" value="{{component.description}}"/>{{component.product.description}}::{{component.description}}<span class="filter_length"></span></div>
+                        {% endfor %}
+                    {% endif %}
+                    {% if view.members %}
+                        <h3>Contributors</h3>
+                        {% for member in view.members %}
+                            <div id="{{member.email}}" class="filter"><input type="checkbox" name="members" value="{{member.email}}"/>{{member.email}}<span class="filter_length"></span></div>
+                        {% endfor %}
+                    {% endif %}
+                {% elif email %}
+                    <p>Viewing bugs assigned to:</p>
                     <h3>{{email}}</h3>
+                {% elif product %}
+                    <p>Viewing bugs for:</p>
+                    <h3>{{product.description}}</h3>
+                    {% if query_components %}
+                        {% for component in query_components %}
+                            <div id="{{component.description|replace(' ','_')}}" class="filter"><input type="checkbox" name="components" value="{{component.description}}"/>{{ component.description }}<span class="filter_length"></span></div>
+                        {% endfor %}
+                    {% else %}
+                        {% for component in product.components %}
+                            <div id="{{component.description|replace(' ','_')}}" class="filter component"><input type="checkbox" name="components" value="{{component.description}}"/>{{ component.description }}<span class="filter_length"></span></div>
+                        {% endfor %}
+                    {% endif %}
                 {% endif %}
             </div>
             <div class="col3">
@@ -80,7 +104,7 @@
                         <option>Filter</option>
                     </select>
                     {% for keyword in keywords%}
-                        <p id="{{keyword}}"><input type="checkbox" name="keywords" value="{{keyword}}"/><tag id="{{keyword}}">{{ keyword }}</tag></p>
+                        <div id="{{keyword}}" class="filter keyword"><input type="checkbox" name="keywords" value="{{keyword}}"/><tag id="{{keyword}}">{{ keyword }}</tag></div>
                     {% endfor %}
                     </form>
                 {% endif %}
