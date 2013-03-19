@@ -41,9 +41,7 @@ def close_db_connection(exception):
  
 @app.route('/')
 def index():
-    if 'bmo' not in session.keys():
-        print 'no bmo'
-        session['bmo'] = BMOAgent('','')
+    initializeSession()
     session['last_url'] = 'index'
     message = ''
     email = request.args.get('email')
