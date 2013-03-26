@@ -12,15 +12,9 @@
 <script type=text/javascript src="{{ url_for('static', filename='js/login.js') }}"></script>
 <script type=text/javascript src="{{ url_for('static', filename='js/sorters.js') }}"></script>
 <script type=text/javascript src="{{ url_for('static', filename='js/filter.js') }}"></script>
+<script type=text/javascript src="{{ url_for('static', filename='js/views.js') }}"></script>
 <script type=text/javascript>
     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-</script>
-<script>
-    $(function() {
-        resetTags();
-        colorizeTags();
-        activateTags();
-    });
 </script>
 </head>
 <body>
@@ -67,7 +61,7 @@
                     {% if view.components %}
                         <h3>Products</h3>
                         {% for component in view.components %}
-                            <div id="{{component.description|replace(' ','_')}}" class="filter"><input type="checkbox" name="components" value="{{component.description}}"/>{{component.product.description}}::{{component.description}}<span class="filter_length"></span></div>
+                            <div id="{{component.description|replace(' ','_')}}" class="filter component"><input type="checkbox" name="components" value="{{component.description}}"/>{{component.product.description}}::{{component.description}}<span class="filter_length"></span></div>
                         {% endfor %}
                     {% endif %}
                     {% if view.members %}
@@ -80,11 +74,10 @@
                     <p>Viewing bugs assigned to:</p>
                     <h3>{{email}}</h3>
                 {% elif product %}
-                    <p>Viewing bugs for:</p>
                     <h3>{{product.description}}</h3>
                     {% if query_components %}
                         {% for component in query_components %}
-                            <div id="{{component.description|replace(' ','_')}}" class="filter"><input type="checkbox" name="components" value="{{component.description}}"/>{{ component.description }}<span class="filter_length"></span></div>
+                            <div id="{{component.description|replace(' ','_')}}" class="filter component"><input type="checkbox" name="components" value="{{component.description}}"/>{{ component.description }}<span class="filter_length"></span></div>
                         {% endfor %}
                     {% else %}
                         {% for component in product.components %}
@@ -92,27 +85,70 @@
                         {% endfor %}
                     {% endif %}
                 {% endif %}
+                <div id="keywords_container">
+                </div>
             </div>
-            <div class="col3">
-                {% set keywords = getKeywords(buglist) %}
-                {% if keywords %}
-                <h3>Keywords</h3>
-                    <form>
-                    Tag method: 
-                    <select id="tagmethod" onchange="resetTags()">
-                        <option>Highlight</option>
-                        <option>Filter</option>
-                    </select>
-                    {% for keyword in keywords%}
-                        <div id="{{keyword}}" class="filter keyword"><input type="checkbox" name="keywords" value="{{keyword}}"/><tag id="{{keyword}}">{{ keyword }}</tag></div>
-                    {% endfor %}
-                    </form>
-                {% endif %}
+            <div class="col3" style="text-align: center;">
+                <div class="schedule">
+                    <p>We are in week</p>
+                    <h1><span id="week"></span></h1>
+                    <p>of FFX Beta</p>
+                    <p>FFX ships in: <span id="daysleft"></span> days</p>
+                </div>
+                <div id="view">
+                    Switch view:
+                    <a href="#viewbubble" onclick="viewBubble();return false;">Bubble</a>
+                    <a href="#viewtable" onclick="viewTable();return false;">Table</a>
+                    <a href="#viewcheckerbox" onclick="viewCheckerbox();return false;">Checkerbox</a>
+                </div>
             </div>
         </div>
     </div>
 </div>
 <div class="footer">
 </div>
+<script>
+    $(function() {
+        var keywords = [];
+        $("span.keyword").each(function(index) {
+            var keyword = $(this).text();
+            if ($.inArray(keyword,keywords) == -1) {
+                if ($("#keywords_container").children().length == 0) {
+                    $("#keywords_container").append("<h3>Keywords</h3>");
+                }
+                keywords.push(keyword);
+                $("#keywords_container").append('<div id="' + keyword + '" class="filter keyword"><input type="checkbox" name="keywords" value="' + keyword + '"/><tag id="' + keyword + '">' + keyword + '</tag></div>');
+            }
+        });
+        
+        resetTags();
+        activateTags();
+        activateComponents();
+        
+        sortNormal('.modified', 'asc');
+        
+        var cycle = '{{ session.vt.cycle }}';
+        
+        var date1 = new Date(cycle.substr(0,4),cycle.substr(4,2)-1,cycle.substr(6,2));
+        
+        var date2 = new Date(cycle.substr(9,4),cycle.substr(13,2)-1,cycle.substr(15,2));
+        
+        var today = new Date();
+        var week = ((today - date1)/((1000*60*60*24)+1)/7)+1;
+        var countdown = ((date2 - today)/(1000*60*60*24));
+        
+        $("#week").text(Math.round(week));
+        $("#daysleft").text(Math.round(countdown));
+        
+        var style = '{{style}}';
+        if (style == 'None' || style == 'list') {
+            viewBubble();
+        } else if (style == 'table') {
+            viewTable();
+        } else {
+            viewCheckerbox();
+        }
+    });
+</script>
 </body>
 

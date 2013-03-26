@@ -2,55 +2,84 @@
 {% block body %}
     <div id="tabs">
         <ul id="ul_tabs">
+            <li><a href="#tab_main">Main <span class="length"></span></a></li>
+            <li><a href="#tab_nominate">To nominate <span class="length"></span></a></li>
+            <li><a href="#tab_approve">To approve <span class="length"></span></a></li>
+            <li><a href="#tab_uplift">To uplift <span class="length"></span></a></li>
         </ul>
+        <p id="selectsort">Sort by:
+        <select id="sort" onchange="sortTables();">
+            <option>Severity</option>
+            <option>Security</option>
+            <option>Priority</option>
+            <option>ID ascending</option>
+            <option>ID descending</option>
+            <option>Last modified</option>
+        </select></p>
         <div id="tab_main">
-        </div>
-        <div id="tab_info">
+            <span class="empty"></span>
+            <div id="tab_info" class="bugs_display">
+                <h3>Needs Info <span class="length"></span></h3>
+                <span class="empty"></span>
+            </div>
+            <div id="tab_beta" class="bugs_display">
+                <h3>Tracked Beta Bugs <span class="length"></span></h3>
+                <span class="empty"></span>
+            </div>
+            <div id="tab_aurora" class="bugs_display">
+                <h3>Tracked Aurora Bugs <span class="length"></span></h3>
+                <span class="empty"></span>
+            </div>
+            <div id="tab_esr" class="bugs_display">
+                <h3>Tracked ESR Bugs <span class="length"></span></h3>
+                <span class="empty"></span>
+            </div>
         </div>
         <div id="tab_nominate">
+            <span class="empty"></span>
         </div>
         <div id="tab_approve">
+            <span class="empty"></span>
         </div>
         <div id="tab_uplift">
+            <span class="empty"></span>
         </div>
     </div>
-    {% from "_listhelpers.html" import printTab %}
-    {% if mainlist %}
-        {{ printTab(mainlist, 'main', 'Main') }}
+    {% from "_helpers.html" import printEmptyTables %}
+    {% from "_helpers.html" import printBugs %}
+    {{ printEmptyTables() }}
+    {% set beta = getTrackedBugs(session.vt.beta, buglist) %}
+    {% if beta %}
+        {{ printBugs(beta, 'beta') }}
     {% endif %}
-    {% set info = getNeedsInfoBugs(emails=email, bmo=session.bmo) %}
+    {% set aurora = getTrackedBugs(session.vt.aurora, buglist) %}
+    {% if aurora %}
+        {{ printBugs(aurora, 'aurora') }}
+    {% endif %}
+    {% set esr = getTrackedBugs(session.vt.esr, buglist) %}
+    {% if esr %}
+        {{ printBugs(esr, 'esr') }}
+    {% endif %}
+    {% set info = getNeedsInfoBugs(emails=email, bmo=session.bmo, vt=session.vt) %}
     {% if info %}
-        {{ printTab(info, 'info', 'Needs info') }}
+        {{ printBugs(info, 'info') }}
     {% endif %}
     {% set nominate = getToNominateBugs(session.vt.beta, session.vt.aurora, followlist) %}
     {% if nominate %}
-        {{ printTab(nominate, 'nominate', 'To nominate') }}
+        {{ printBugs(nominate, 'nominate') }}
     {% endif %}
     {% set approve = getToApproveBugs(followlist) %}
     {% if approve %}
-        {{ printTab(approve, 'approve', 'To approve') }}
+        {{ printBugs(approve, 'approve') }}
     {% endif %}
     {% set uplift = getToUpliftBugs(session.vt.beta, session.vt.aurora, buglist) %}
     {% if uplift %}
-        {{ printTab(uplift, 'uplift', 'To uplift') }}
+        {{ printBugs(uplift, 'uplift') }}
     {% endif %}
-    <script type=text/javascript>
-        $(function() { 
-            $(".tablesorter").tablesorter();
+    <script>
+        $(function() {
             $("#tabs").tabs();
-            $(".sev.header").click(function() {
-                var selectedPanel = $("#tabs div.ui-tabs-panel:not(.ui-tabs-hide)");
-                sortBySeverity(selectedPanel);
-            });
-            activateSort();
+            recalculateTotal();
         });
-
-        function activateSort() {
-            $("option").click(function() {
-                var sortClass = $(this).attr('value');
-                var selectedPanel = $("#tabs div.ui-tabs-panel:not(.ui-tabs-hide)");
-                sortBySecurity(selectedPanel);
-            });
-        }
     </script>
 {% endblock %}

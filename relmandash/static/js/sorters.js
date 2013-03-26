@@ -10,6 +10,8 @@ function sortTables() {
         sortNormal('.id', 'asc');
     } else if (selected == 'ID descending') {
         sortNormal('.id', 'desc');
+    } else if (selected == 'Last modified') {
+        sortNormal('.modified', 'asc');
     }
 }
 

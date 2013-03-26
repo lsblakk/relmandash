@@ -1,0 +1,48 @@
+{% macro printEmptyTables() %}
+    <script>
+        var displaytabs = $("#tabs").find(".bugs_display");
+        var table = $('<table/>');
+        var table = $('<table />', {
+            'class': '{{tab}} tablesorter',
+            html:    '<thead><tr><th class="id">ID</th><th class="comp">Component</th><th class="sev">Severity</th><th class="pri">Priority</th><th>Summary</th></tr></thead>'
+        });
+        table.append('<tbody/>');
+        displaytabs.append(table);
+    </script>
+{% endmacro %}
+
+{% macro printListRow(tab, bug) -%}
+    <script>
+        var row = $('<tr/>', {
+            'class': '{{ bug.id }} {{ bug.severity }}',
+            html:    '<td class="table"><a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">{{bug.id}}</a></td><td class="table">{{bug.component}}</td><td class="table">{{bug.severity}}</td><td class="table">{{bug.priority}}</td><td class="table">{{bug.summary|truncate(80)}}</td><td class="bubble"><a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">{{bug.id}} {{bug.summary|truncate(80)}}</a><br/><span class="modified">last modified: {{bug.last_change_time}}</span></td>'
+        });
+        
+        row.append('<span class="hidden id">{{bug.id}}</span>');
+        row.append('<span class="hidden severity">{{bug.severity}}</span>');
+        row.append('<span class="hidden priority">{{bug.priority}}</span>');
+        row.append('<span class="hidden component">{{bug.component}}</span>');
+        row.addClass("{{bug.component|replace(' ','_')}}");
+        $('div#tab_{{tab}} > table > tbody').append(row);
+    </script>
+    {% for group in bug.groups %}
+        <script>
+        $("tr.{{bug.id}}").addClass("{{group.name}}");
+        $("tr.{{bug.id}}").append('<span class="hidden security">{{group.name}}</span>');
+        </script>
+    {% endfor %}
+    {% for keyword in bug.keywords %}
+        <script>
+        $("tr.{{bug.id}}").addClass("{{keyword}}");
+        $("tr.{{bug.id}}").append('<span class="hidden keyword">{{keyword}}</span>');
+        </script>
+    {% endfor %}
+{%- endmacro %}
+
+{% macro printBugs(bugs, tab) %}
+    {% if bugs %}
+        {% for bug in bugs %}
+            {{ printListRow(tab, bug) }}
+        {% endfor %}
+    {% endif %}
+{%- endmacro %}

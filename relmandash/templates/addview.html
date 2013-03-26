@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block body %}
+    <form action="{{url_for('add_view')}}" method="post">
+        <h3>Create a default view</h3>
+                <p><label for="viewname">Name of view</label><br/>
+                <input type="text" name="viewname" id="viewname" value="" class="text ui-widget-content ui-corner-all" /></p>
+                <p><label for="description">Write a small description of your view</label><br/>
+                <input type="textarea" name="description" id="description" value="" class="text ui-widget-content ui-corner-all" /></p>
+                <p>Default
+                <select name="default"><option value="yes">Yes</option>
+                <option value="no" selected=selected>No</option></select></p>
+                <p>A view is made up of sub-views that can either show bugs assigned to a contributor or bugs related to a certain product/component.</p>
+                <p>Choose from a list of products and/or components, and/or type in contributors' emails!</p>
+                
+                <p>Products and Components</p>
+                <p class="modified">Select all components to select a product</p>
+                <select multiple id="productselector" name="components">
+                    {% for product in products %}
+                         <optgroup label="{{ product.description }}">
+                         {% for component in product.components %}
+                            <option value="{{ component.id }}">{{ component.description }}</option>
+                         {% endfor %}
+                         </optgroup>
+                    {% endfor %}
+                </select>
+                <p>Contributors</p>
+                <p><input type="text" name="emails" value=""/></p>
+                <div id="addemail"><p>Add another email</p></div>
+            <input type="submit" value="Submit">
+    </form>
+{% endblock %}
