@@ -1,3 +1,16 @@
+function sortCheckerbox() {
+    var listItems = $('#checkerbox').children();
+    if (listItems.length > 1) {
+        $('#checkerbox').children().remove();
+        listItems.sort(function(a,b) {
+            var compA = Number($(a).find(".length").text());
+            var compB = Number($(b).find(".length").text());
+            return (compA > compB) ? -1 : (compA < compB) ? 1 : 0;
+        });
+        $('#checkerbox').append(listItems);
+    }
+}
+
 function sortTables() {
     var selected = $("#sort option:selected").text();
     if (selected == 'Severity') {

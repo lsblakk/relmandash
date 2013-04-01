@@ -2,7 +2,7 @@ function recalculateLength() {
     $(".length").each(function() {
         var pp = $(this).parent().parent();
         if (pp.prop("tagName") == "DIV") {
-            var rows = pp.find("tr.show").length;
+            var rows = pp.find("tbody > tr.show").length;
             if (rows == 0) {
                 pp.find(".empty").text("No bugs for current filter");
                 //$("thead").hide();
@@ -11,7 +11,7 @@ function recalculateLength() {
             }
             $(this).text('(' + rows + ')');
         } else if (pp.prop("tagName") == "LI") {
-            var rows = $($(this).parent().attr('href')).find("tr.show").length;
+            var rows = $($(this).parent().attr('href')).find("tbody > tr.show").length;
             if (rows == 0 && $($(this).parent().attr('href')).find("div").length == 0) {
                 $($(this).parent().attr('href')).find(".empty").text("No bugs for current filter");
                 //$("thead").hide();
@@ -26,10 +26,11 @@ function recalculateLength() {
 function recalculateTotal() {
     $(".empty").text("");
     //$("thead").show();
+    var total = 0;
     $(".length").each(function() {
         var pp = $(this).parent().parent();
         if (pp.prop("tagName") == "DIV" && pp.attr("class") != "card") {
-            var rows = pp.find("tr").length;
+            var rows = pp.find("tbody > tr").length;
             if (rows == 0) {
                 pp.hide();
             }
@@ -37,7 +38,7 @@ function recalculateTotal() {
             $(".length."+pp.attr("id")).text(rows);
         } else if (pp.prop("tagName") == "LI") {
             var href = $(this).parent().attr('href');
-            var rows = $(href).find("tr").length;
+            var rows = $(href).find("tbody > tr").length;
             if (rows == 0) {
                 if ($(href).find("div").length == 0) {
                     pp.hide();
@@ -47,8 +48,12 @@ function recalculateTotal() {
             }
             $(this).text('(' + rows + ')');
             $(".length."+href.substr(1,href.length)).text(rows);
+            total += rows;
         }
     });
+    if (total == 0) {
+        $("#message").text("No bugs found!");
+    }
 }
 
 function resetTags() {
@@ -101,8 +106,8 @@ function activateTags() {
                 $("tbody > tr").hide();
                 $("input:checked").each(function() {
                     //selectedPanel.find("tr."+$(this).val()).show();
-                    $("tbody > tr."+$(this).parent().attr('id')).addClass('show');
-                    $("tbody > tr."+$(this).parent().attr('id')).show();
+                    $("tbody > tr."+$(this).val()).addClass('show');
+                    $("tbody > tr."+$(this).val()).show();
                 });
                 recalculateLength();
             }
@@ -112,12 +117,12 @@ function activateTags() {
 }
 
 function activateComponents() {
-    $("div.filter.component").click(function() {
+    $("div.filter").click(function() {
         var checkbox = $(this).children("input:checkbox")[0];
         checkbox.prop('checked', !checkbox.prop('checked'));
     });
     
-    $("div.filter.component > input:checkbox").on( "change", function() {
+    $("div.filter > input:checkbox").on( "change", function() {
             if ($("input:checked").length == 0) {
                 $("tbody > tr").addClass('show');
                 $("tbody > tr").show();
@@ -126,8 +131,8 @@ function activateComponents() {
                 $("tbody > tr").removeClass('show');
                 $("tbody > tr").hide();
                 $("input:checked").each(function() {
-                    $("tbody > tr."+$(this).parent().attr('id')).addClass('show');
-                    $("tbody > tr."+$(this).parent().attr('id')).show();
+                    $("tbody > tr."+$(this).val()).addClass('show');
+                    $("tbody > tr."+$(this).val()).show();
                 });
                 recalculateLength();
             }

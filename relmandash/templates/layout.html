@@ -13,6 +13,7 @@
 <script type=text/javascript src="{{ url_for('static', filename='js/sorters.js') }}"></script>
 <script type=text/javascript src="{{ url_for('static', filename='js/filter.js') }}"></script>
 <script type=text/javascript src="{{ url_for('static', filename='js/views.js') }}"></script>
+<script type=text/javascript src="{{ url_for('static', filename='js/sidebars.js') }}"></script>
 <script type=text/javascript>
     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 </script>
@@ -24,18 +25,7 @@
         <p>logged in as <a href="{{ url_for('profile', email=session.user.email) }}">{{ session.user.email }}</a> | 
         <a href="{{ url_for('logout') }}">Logout</a></p>
     {% else %}
-    <div id="form_login" title="Login Form">
-        <p class="validateTips">All form fields are required.</p>
-        <form id="login" action="{{ url_for('login') }}" method="post">
-            <fieldset>
-                <p><label for="email">Bugzilla Email</label>
-                <input type="text" name="email" id="loginemail" value="" class="text ui-widget-content ui-corner-all" /></p>
-                <p><label for="password">Password</label><br/>
-                <input type="password" name="password" id="loginpassword" value="" class="text ui-widget-content ui-corner-all" /></p>
-            </fieldset>
-        </form>
-    </div>
-    <p><button id="btn_login">Login</button> | 
+    <p><a href="{{ url_for('login') }}">Login</a> | 
     <a href="{{ url_for('signup') }}">Sign Up</a></p>
     {% endif %}
     </span>
@@ -48,12 +38,8 @@
     <div class="colmid">
         <div class="colleft">
             <div class="col1">
-                {% if error %}
-                    <p class="error">Error: {{ error }}</p>
-                {% endif %}
-                {% if message %}
-                    <p>{{ message }}</p>
-                {% endif %}
+                <p id="error" class="error">{% if error %}Error: {{ error }}{% endif %}</p>
+                <p id="message">{% if message %}{{ message }}{% endif %}</p>
                 {% block body %}{% endblock %}
             </div>
             <div class="col2">
@@ -61,14 +47,28 @@
                     {% if view.components %}
                         <h3>Products</h3>
                         {% for component in view.components %}
-                            <div id="{{component.description|replace(' ','_')}}" class="filter component"><input type="checkbox" name="components" value="{{component.description}}"/>{{component.product.description}}::{{component.description}}<span class="filter_length"></span></div>
+                            <div id="{{component.description|replace(' ','_')}}" class="filter component"><input type="checkbox" name="components" value="{{component.description|replace(' ','_')|replace(',','')}}"/>{{component.product.description}}::{{component.description}}<span class="filter_length"></span></div>
                         {% endfor %}
+                        <script>
+                            $("div.filter.component > input:checkbox").each(function() {
+                                var val = $(this).val();
+                                if (val.indexOf(':') > -1) {
+                                    $(this).val(val.substring(0,val.indexOf(':')));
+                                }
+                            });
+                        </script>
                     {% endif %}
                     {% if view.members %}
                         <h3>Contributors</h3>
                         {% for member in view.members %}
-                            <div id="{{member.email}}" class="filter"><input type="checkbox" name="members" value="{{member.email}}"/>{{member.email}}<span class="filter_length"></span></div>
+                            <div id="{{member.email}}" class="filter member"><input type="checkbox" name="members" value="{{member.email}}"/>{{member.email}}<span class="filter_length"></span></div>
                         {% endfor %}
+                        <script>
+                            $("div.filter.member > input:checkbox").each(function() {
+                                var val = $(this).val();
+                                $(this).val(val.substring(0,val.indexOf('@')));
+                            });
+                        </script>
                     {% endif %}
                 {% elif email %}
                     <p>Viewing bugs assigned to:</p>
@@ -77,30 +77,25 @@
                     <h3>{{product.description}}</h3>
                     {% if query_components %}
                         {% for component in query_components %}
-                            <div id="{{component.description|replace(' ','_')}}" class="filter component"><input type="checkbox" name="components" value="{{component.description}}"/>{{ component.description }}<span class="filter_length"></span></div>
+                            <div id="{{component.description|replace(' ','_')}}" class="filter component"><input type="checkbox" name="components" value="{{component.description|replace(' ','_')|replace(':','')|replace(',','')}}"/>{{ component.description }}<span class="filter_length"></span></div>
                         {% endfor %}
                     {% else %}
-                        {% for component in product.components %}
-                            <div id="{{component.description|replace(' ','_')}}" class="filter component"><input type="checkbox" name="components" value="{{component.description}}"/>{{ component.description }}<span class="filter_length"></span></div>
-                        {% endfor %}
+                        <div id="component_container"></div>
                     {% endif %}
                 {% endif %}
-                <div id="keywords_container">
-                </div>
+                <div id="keyword_container"></div>
             </div>
-            <div class="col3" style="text-align: center;">
+            <div class="col3">
                 <div class="schedule">
-                    <p>We are in week</p>
-                    <h1><span id="week"></span></h1>
-                    <p>of FFX Beta</p>
-                    <p>FFX ships in: <span id="daysleft"></span> days</p>
+                    <div class="calendar">
+                        <p>We are in week</p>
+                        <h1><span id="week"></span></h1>
+                        <h3>of FFX{{ session.vt.beta }} Beta</h3>
+                    </div>
+                    <p>FFX{{ session.vt.beta }} ships in: <span id="daysleft"></span><span id="days"></span></p>
                 </div>
-                <div id="view">
-                    Switch view:
-                    <a href="#viewbubble" onclick="viewBubble();return false;">Bubble</a>
-                    <a href="#viewtable" onclick="viewTable();return false;">Table</a>
-                    <a href="#viewcheckerbox" onclick="viewCheckerbox();return false;">Checkerbox</a>
-                </div>
+                <br/>
+                <div id="view"></div>
             </div>
         </div>
     </div>
@@ -109,45 +104,27 @@
 </div>
 <script>
     $(function() {
-        var keywords = [];
-        $("span.keyword").each(function(index) {
-            var keyword = $(this).text();
-            if ($.inArray(keyword,keywords) == -1) {
-                if ($("#keywords_container").children().length == 0) {
-                    $("#keywords_container").append("<h3>Keywords</h3>");
-                }
-                keywords.push(keyword);
-                $("#keywords_container").append('<div id="' + keyword + '" class="filter keyword"><input type="checkbox" name="keywords" value="' + keyword + '"/><tag id="' + keyword + '">' + keyword + '</tag></div>');
+        if ($(".bugs_display").length > 0) {
+            $("#keyword_container").append("<h3>Keywords</h3>");
+            print_filter("component");
+            print_filter("keyword");
+            count_filter();
+            resetTags();
+            activateComponents();
+            sortCheckerbox();
+            sortNormal('.modified', 'asc');
+            
+            $("#view").append('Switch view: <a href="#viewbubble" onclick="viewBubble();return false;">Bubble</a> <a href="#viewtable" onclick="viewTable();return false;">Table</a> <a href="#viewcheckerbox" onclick="viewCheckerbox();return false;">Checkerbox</a>');
+            var style = '{{style}}';
+            if (style == 'count') {
+                viewCheckerbox();
+            } else if (style == 'table') {
+                viewTable();
+            } else {
+                viewBubble();
             }
-        });
-        
-        resetTags();
-        activateTags();
-        activateComponents();
-        
-        sortNormal('.modified', 'asc');
-        
-        var cycle = '{{ session.vt.cycle }}';
-        
-        var date1 = new Date(cycle.substr(0,4),cycle.substr(4,2)-1,cycle.substr(6,2));
-        
-        var date2 = new Date(cycle.substr(9,4),cycle.substr(13,2)-1,cycle.substr(15,2));
-        
-        var today = new Date();
-        var week = ((today - date1)/((1000*60*60*24)+1)/7)+1;
-        var countdown = ((date2 - today)/(1000*60*60*24));
-        
-        $("#week").text(Math.round(week));
-        $("#daysleft").text(Math.round(countdown));
-        
-        var style = '{{style}}';
-        if (style == 'None' || style == 'list') {
-            viewBubble();
-        } else if (style == 'table') {
-            viewTable();
-        } else {
-            viewCheckerbox();
         }
+        print_countdown('{{ session.vt.cycle }}');
     });
 </script>
 </body>

@@ -35,14 +35,44 @@
                 <span class="empty"></span>
             </div>
         </div>
-        <div id="tab_nominate">
+        <div id="tab_nominate" class="bugs_display">
             <span class="empty"></span>
         </div>
-        <div id="tab_approve">
+        <div id="tab_approve" class="bugs_display">
             <span class="empty"></span>
         </div>
-        <div id="tab_uplift">
+        <div id="tab_uplift" class="bugs_display">
             <span class="empty"></span>
+        </div>
+    </div>
+    <div id="checkerbox">
+        <div class="card" title="Needs info">
+            <h1><span class="length tab_info"></span></h1>
+            <h3>Needs info</h3>
+        </div>
+        <div class="card" title="Tracking Beta">
+            <h1><span class="length tab_beta"></span></h1>
+            <h3>Tracking Beta</h3>
+        </div>
+        <div class="card" title="Tracking Aurora">
+            <h1><span class="length tab_aurora"></span></h1>
+            <h3>Tracking Aurora</h3>
+        </div>
+        <div class="card" title="Tracking ESR">
+            <h1><span class="length tab_esr"></span></h1>
+            <h3>Tracking ESR</h3>
+        </div>
+        <div class="card" title="To nominate">
+            <h1><span class="length tab_nominate"></span></h1>
+            <h3>To nominate</h3>
+        </div>
+        <div class="card" title="To approve">
+            <h1><span class="length tab_approve"></span></h1>
+            <h3>To approve</h3>
+        </div>
+        <div class="card" title="To uplift">
+            <h1><span class="length tab_uplift"></span></h1>
+            <h3>To uplift</h3>
         </div>
     </div>
     {% from "_helpers.html" import printEmptyTables %}
@@ -61,20 +91,22 @@
         {{ printBugs(esr, 'esr') }}
     {% endif %}
     {% set info = getNeedsInfoBugs(emails=email, bmo=session.bmo, vt=session.vt) %}
-    {% if info %}
-        {{ printBugs(info, 'info') }}
-    {% endif %}
-    {% set nominate = getToNominateBugs(session.vt.beta, session.vt.aurora, followlist) %}
-    {% if nominate %}
-        {{ printBugs(nominate, 'nominate') }}
-    {% endif %}
-    {% set approve = getToApproveBugs(followlist) %}
-    {% if approve %}
-        {{ printBugs(approve, 'approve') }}
-    {% endif %}
-    {% set uplift = getToUpliftBugs(session.vt.beta, session.vt.aurora, buglist) %}
-    {% if uplift %}
-        {{ printBugs(uplift, 'uplift') }}
+    {% if email != 'nobody@mozilla.org' %}
+        {% if info %}
+            {{ printBugs(info, 'info') }}
+        {% endif %}
+        {% set nominate = getToNominateBugs(session.vt.beta, session.vt.aurora, followlist) %}
+        {% if nominate %}
+            {{ printBugs(nominate, 'nominate') }}
+        {% endif %}
+        {% set approve = getToApproveBugs(followlist) %}
+        {% if approve %}
+            {{ printBugs(approve, 'approve') }}
+        {% endif %}
+        {% set uplift = getToUpliftBugs(session.vt.beta, session.vt.aurora, followlist) %}
+        {% if uplift %}
+            {{ printBugs(uplift, 'uplift') }}
+        {% endif %}
     {% endif %}
     <script>
         $(function() {

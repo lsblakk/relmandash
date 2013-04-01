@@ -21,5 +21,6 @@ This project runs on Flask - follow the instructions below to check out the code
     
 #. Run dashboard.py to try out the application locally::
 
-    python dashboard.py
+    python dashboard.py db_setup --> to set up database and run server
+    python dashboard.py         --> to run server only
 

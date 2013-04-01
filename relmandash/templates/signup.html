@@ -1,11 +1,11 @@
 {% extends "layout.html" %}
 {% block body %}
     <h2>Sign up</h2>
-    <div title="Login Form">
-        <p class="validateTips">All form fields are required.</p>
+    <div title="Signup Form">
         <form id="signup" action="{{ url_for('signup') }}" method="post">
             <fieldset>
                 <h3>Step 1: Set up account</h3>
+                <p class="validateTips">All form fields are required.</p>
                 <p><label for="email">Bugzilla Email</label><br/>
                 <input type="text" name="email" id="email" value="" class="text ui-widget-content ui-corner-all" /></p>
                 <p><label for="password">Bugzilla Password</label><br/>

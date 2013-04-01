@@ -33,6 +33,32 @@ ul#ul_tabs li{
     font-size: 85%;
 }
 
+/* Sidebars */
+.disabled {
+   color: #DDDDDD;
+}
+.schedule {
+    /*text-align: center;*/
+}
+.calendar {
+    width: 18em;
+    height: 18em;
+    background-image: url("img/calendar.png");
+    background-size:18em 18em;
+    background-repeat:no-repeat;
+    background-position: center;
+    text-align: center;
+}
+.calendar p {
+    padding-top: 2em;
+    color: #FFFFFF;
+}
+.calendar h1 {
+    font-size: 10em;
+    margin: 0 0 -0.3em 0;
+}
+
+/* Checkerbox view */
 .card {
     width: 18em;
     height: 15em;
@@ -57,6 +83,8 @@ ul#ul_tabs li{
     margin: 0;
     margin-bottom: -15px;
 }
+
+/* Bugs display */
 tr.enhancement, tr.enhancement a {
     color: #CCBBB4;
 }

@@ -11,83 +11,6 @@ import os
 import hashlib
 from utils import *
 from models import *
-
-def view_individual(email):
-    error = ''
-    mainlist=[]
-    followlist=[]
-    pattern = re.compile('^[\w._%+-]+@[\w.-]+\.[A-Za-z]{2,6}$')
-    try:
-        if pattern.match(email):
-            mainlist = getAssignedBugs(email)
-            followlist = getToFollowBugs(email)
-            print len(mainlist)
-            print len(followlist)
-        else:
-            raise Exception('Invalid email address')
-    except Exception, e:
-        error = 'Individual view: ' + str(e)
-    return render_template('individual.html', error=error, email=email, buglist=mainlist, followlist=followlist)
-
-def view_prodcomp(product, components=[], style=''):
-    error = ''
-    prod = None
-    buglist = []
-    try:
-        initializeSession()
-        vt = session['vt']
-        
-        prod = Product.query.filter_by(description=product).first()
-        if product is None:
-            raise Exception('Invalid product')
-            
-        componentsSentence = ''
-        if len(components) > 0:
-            for component in components:
-                compquery = [item for item in prod.components if item.description == component]
-                if len(compquery) == 0:
-                    error = 'Product view: One or more components entered is invalid'
-                else:
-                    componentsSentence = componentsSentence + ', ' + component
-        
-        if components == [] or componentsSentence != '':
-            bmo = session['bmo']
-            buglist = bmo.get_bug_list(getProdComp(product, componentsSentence, vt))
-            if len(buglist) == 0:
-                raise Exception('Looks like there are no tracked bugs for this product/component!')
-    except Exception, e:
-        error = 'Product view: ' + str(e)
-    return render_template('prodcomplist.html', product=prod, query_components=components, buglist=buglist, style=style, error=error)
-
-def create_view(user, request):
-    try:
-        view_name = request.form['viewname']
-        view_desc = request.form['description']
-        view_default = request.form['default']
-        view_comps = request.form.getlist('components')
-        view_emails = request.form.getlist('emails')
-        default = False
-        
-        if not view_comps and len(view_emails) == 1 and view_emails[0] == '':
-            raise Exception('Empty view not allowed')
-        
-        if view_default == 'yes':
-            default = True
-            user = User.query.filter_by(id=user.id).first()
-            for view in user.views:
-                view.default = False
-            
-        view = View(view_name, view_desc, default, user)
-        db.session.add(view)
-        
-        for component_id in view_comps:
-            view.components.append(Component.query.filter_by(id=component_id).first())
-        for member in view_emails:
-            if member != '':
-                view.members.append(Member(member))
-        db.session.commit()
-    except Exception, e:
-        raise Exception('Failed to create view: ' + str(e))
     
 '''
         VIEWS
@@ -185,18 +108,18 @@ def edit_views(view_id):
 def index():
     error = ''
     message = ''
-    try:
-        initializeSession()
-        email = request.args.get('email')
-        product = request.args.get('product')
-        components = request.args.getlist('component')
-        style = request.args.get('style')
-        if email:
-            return view_individual(email)
-        elif product:
-            return view_prodcomp(product=product, components=components, style=style)
-        elif request.args.keys():
-            raise Exception('Invalid query!')
-    except Exception, e:
-        error = ''
+    #try:
+    initializeSession()
+    email = request.args.get('email')
+    product = request.args.get('product')
+    components = request.args.getlist('component')
+    style = request.args.get('style')
+    if email:
+        return view_individual(email)
+    elif product:
+        return view_prodcomp(product=product, components=components, style=style)
+    elif request.args.keys():
+        raise Exception('Invalid query!')
+    #except Exception, e:
+    #    error = e
     return render_template('index.html', message=message, error=error)

@@ -1,20 +1,20 @@
-def getAssignedOptions(emails):
+def getAssignedOptions(emails, vt):
     options = {
         'email1':            emails,
         'email1_type':       'contains_any_words',
         'email1_assigned_to':1,
         'field0-0-0':        'status',
-        'type0-0-0':         'equals',
-        'value0-0-0':        'NEW',
-        'field0-0-1':        'status',
-        'type0-0-1':         'equals',
-        'value0-0-1':        'ASSIGNED',
-        'field0-0-2':        'status',
-        'type0-0-2':         'equals',
-        'value0-0-2':        'REOPENED',
-        'field0-0-3':        'status',
-        'type0-0-3':         'equals',
-        'value0-0-3':        'UNCONFIRMED',
+        'type0-0-0':         'contains_any_words',
+        'value0-0-0':        'NEW, ASSIGNED, REOPENED, UNCONFIRMED',
+        'field1-0-0':        'cf_tracking_firefox'+str(vt.beta),
+        'type1-0-0':         'equals',
+        'value1-0-0':        '+',
+        'field1-0-1':        'cf_tracking_firefox'+str(vt.aurora),
+        'type1-0-1':         'equals',
+        'value1-0-1':        '+',
+        'field1-0-2':        'cf_tracking_firefox'+str(vt.esr),
+        'type1-0-2':         'equals',
+        'value1-0-2':        '+',
         'include_fields':    '_all',
     }
     return options
@@ -82,7 +82,6 @@ def getNeedsInfo(emails, vt):
     
 def getProdComp(product, components, vt):
     options = {
-        'product':           product,
         'field0-0-0':        'status',
         'type0-0-0':         'contains_any_words',
         'value0-0-0':        'NEW, ASSIGNED, REOPENED, UNCONFIRMED',
@@ -104,9 +103,12 @@ def getProdComp(product, components, vt):
         'field0-2-2':        'cf_status_firefox' + str(vt.esr),
         'type0-2-2':         'contains_any_words',
         'value0-2-2':        '---,affected',
-        'field1-0-0':        'component',
-        'type1-0-0':         'contains_any_words',
-        'value1-0-0':        components,
+        'field1-0-0':        'product',
+        'type1-0-0':         'contains',
+        'value1-0-0':        product,
+        'field2-0-0':        'component',
+        'type2-0-0':         'contains_any_words',
+        'value2-0-0':        components,
         'include_fields':    '_all',
     }
     return options

@@ -4,7 +4,7 @@
         <ul id="ul_tabs">
             <li><a href="#tab_main">Main <span class="length"></span></a></li>
             {%if view.components%}
-            <li><a href="#tab_nobody">Unassigned <span class="length "></span></a></li>
+            <li><a href="#tab_unassigned">Unassigned <span class="length "></span></a></li>
             {%endif%}
             {%if view.members%}
             <li><a href="#tab_nominate">To nominate <span class="length"></span></a></li>
@@ -40,7 +40,7 @@
                 <span class="empty"></span>
             </div>
         </div>
-        <div id="tab_nobody" class="bugs_display">
+        <div id="tab_unassigned" class="bugs_display">
             <span class="empty"></span>
         </div>
         <div id="tab_nominate" class="bugs_display">
@@ -72,7 +72,7 @@
         </div>
         {%if view.components%}
         <div class="card" title="Unassigned">
-            <h1><span class="length tab_nobody"></span></h1>
+            <h1><span class="length tab_unassigned"></span></h1>
             <h3>Unassigned</h3>
         </div>
         {%endif%}
@@ -96,7 +96,7 @@
     {{ printEmptyTables() }}
     {% for product, components in prodcompmap.iteritems() %}
         {% set buglist = getProdCompBugs(product, components) %}
-        {% set info = getNeedsInfoBugs(buglist) %}
+        {% set info = getNeedsInfoBugs(buglist=buglist, vt=session.vt) %}
         {% if info %}
             {{ printBugs(info, 'info') }}
         {% endif %}
@@ -110,7 +110,7 @@
         {% endif %}
         {% set unassigned = getUnassignedBugs(buglist) %}
         {% if unassigned %}
-            {{ printBugs(unassigned, 'nobody') }}
+            {{ printBugs(unassigned, 'unassigned') }}
         {% endif %}
         {% set esr = getTrackedBugs(session.vt.esr, buglist) %}
         {% if esr %}

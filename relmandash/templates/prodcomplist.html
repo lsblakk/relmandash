@@ -33,6 +33,28 @@
             <span class="empty"></span>
         </div>
     </div>
+    <div id="checkerbox">
+        <div class="card" title="Needs info">
+            <h1><span class="length tab_info"></span></h1>
+            <h3>Needs info</h3>
+        </div>
+        <div class="card" title="Tracking Beta">
+            <h1><span class="length tab_beta"></span></h1>
+            <h3>Tracking Beta</h3>
+        </div>
+        <div class="card" title="Tracking Aurora">
+            <h1><span class="length tab_aurora"></span></h1>
+            <h3>Tracking Aurora</h3>
+        </div>
+        <div class="card" title="Tracking ESR">
+            <h1><span class="length tab_esr"></span></h1>
+            <h3>Tracking ESR</h3>
+        </div>
+        <div class="card" title="Unassigned">
+            <h1><span class="length tab_unassigned"></span></h1>
+            <h3>Unassigned</h3>
+        </div>
+    </div>
     {% set components = getComponents(buglist) %}
     {% from "_helpers.html" import printEmptyTables %}
     {% from "_helpers.html" import printBugs %}
@@ -49,7 +71,7 @@
     {% if unassigned %}
         {{ printBugs(unassigned, 'unassigned') }}
     {% endif %}
-    {% set info = getNeedsInfoBugs(buglist) %}
+    {% set info = getNeedsInfoBugs(buglist=buglist, vt=session.vt) %}
     {% if info %}
         {{ printBugs(info, 'info') }}
     {% endif %}
@@ -60,7 +82,7 @@
     <script type=text/javascript>
         $(function() {
             $("#tabs").tabs();
-            recalculateLength();
+            recalculateTotal();
         });
     </script>
 {% endblock %}

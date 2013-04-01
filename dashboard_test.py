@@ -2,26 +2,22 @@ import os
 import relmandash
 import unittest
 import tempfile
-from relmandash.dashboard.products import ComponentsTracker
 
 class DashboardTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.db_fd, relmandash.app.config['DATABASE'] = tempfile.mkstemp()
         relmandash.app.config['TESTING'] = True
         self.app = relmandash.app.test_client()
-        relmandash.db.drop_all()
-        relmandash.db.create_all()
-        ct = ComponentsTracker(relmandash.db)
+        relmandash.init_db()
 
     def tearDown(self):
         os.close(self.db_fd)
         os.unlink(relmandash.app.config['DATABASE'])
-        
+        '''
     def test_empty_db(self):
         rv = self.app.get('/')
         assert rv.data == 'no entries'
-        
+    
     def login(self, username, password):
         return self.app.post('/login', data=dict(
             username=username,
@@ -30,7 +26,7 @@ class DashboardTestCase(unittest.TestCase):
 
     def logout(self):
         return self.app.get('/logout', follow_redirects=True)
-        
+    '''
     '''def test_login_logout(self):
         rv = self.login('admin', 'default')
         assert 'You were logged in' in rv.data

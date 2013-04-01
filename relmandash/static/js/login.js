@@ -37,7 +37,7 @@ function checkRegexpInv( o, regexp, n ) {
         return true;
     }
 }
-$( "#form_login" ).dialog({
+/*$( "#form_login" ).dialog({
     autoOpen: false,
     height: 300,
     width: 350,
@@ -68,4 +68,4 @@ $( "#btn_login" )
     .click(function() {
         $( "#form_login" ).dialog( "open" );
     });
-});
+});*/

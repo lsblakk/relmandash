@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
-    {% macro printview(view) -%}
+    {% macro printview(view) %}
         <h3 id="header_{{view.id}}" class="ui-widget-header ui-corner-all"><a href="{{url_for('view_custom', view_id=view.id)}}">{{view.name}} {%if view.default%}(Default){%endif%}</a></h3>
         <div id="view_{{view.id}}" style="display: none">
             <a href="{{url_for('view_custom', view_id=view.id)}}">visit</a>
@@ -65,7 +65,7 @@
                 return false;
             });
         </script>
-    {%- endmacro %}
+    {% endmacro %}
     
     <div id="tabs">
         <ul id="ul_tabs">
@@ -98,10 +98,12 @@
         </div>
         <div id="tab_views">
             <h3>Views Settings</h3>
-            {{ printview(defaultview) }}
+            {% if defaultview %}{{ printview(defaultview) }}{% endif %}
+            {% if otherviews %}
             {% for view in otherviews %}
                 {{ printview(view) }}
             {% endfor %}
+            {% endif %}
             <h3><a href="{{url_for('add_view')}}">Add a view</a></h3>
         </div>
     </div>
