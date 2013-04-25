@@ -1,3 +1,4 @@
+hgtools
 bztools
 Flask==0.9
 Flask-SQLAlchemy==0.16
@@ -5,3 +6,4 @@ PyYAML==3.10
 SQLAlchemy==0.8.0b2
 Werkzeug==0.8.3
 psycopg2
+
