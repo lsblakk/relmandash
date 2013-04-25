@@ -1,0 +1,14 @@
+name: relmandash-lsblakk
+framework: python
+runtime: python27
+env:
+  PIP_REQUIREMENTS_FILE: requirements.txt
+services:
+  relmandash-lsblakk-db: postgresql
+requirements:
+  pypm:
+    - flask-sqlalchemy==0.16
+    - simplejson==3.0.5
+    - requests==1.0.2
+processes:
+  web: python runserver.py

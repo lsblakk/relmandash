@@ -4,6 +4,14 @@ from flask import Flask, request, session, g, redirect, url_for, \
 from dashboard.utils import *
 from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import timedelta
+import os, site
+from config import *
+
+my_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+site.addsitedir(my_dir)
+site.addsitedir(os.path.join(my_dir, "../bztools/bugzilla"))
+site.addsitedir(os.path.join(my_dir, "../remoteobjects"))
+
 from utils import *
 
 # configuration
@@ -17,7 +25,7 @@ app.config.from_object(__name__)
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 app.config['PROPAGATE_EXCEPTIONS'] = True
 
-db_conn = 'postgresql://localhost/dashboard' 
+db_conn = DB_URL
 app.config['SQLALCHEMY_DATABASE_URI'] = db_conn
 db = SQLAlchemy(app)
 
