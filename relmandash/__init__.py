@@ -7,10 +7,10 @@ from datetime import timedelta
 import os, site
 from config import *
 
-my_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+my_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__))).split('/relmandash')[0]
 site.addsitedir(my_dir)
-site.addsitedir(os.path.join(my_dir, "../bztools/bugzilla"))
-site.addsitedir(os.path.join(my_dir, "../remoteobjects"))
+site.addsitedir(os.path.join(my_dir, "bztools/bugzilla"))
+site.addsitedir(os.path.join(my_dir, "remoteobjects"))
 
 from utils import *
 
