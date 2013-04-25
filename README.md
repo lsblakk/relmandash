@@ -24,3 +24,4 @@ This project runs on Flask - follow the instructions below to check out the code
     python dashboard.py db_setup --> to set up database and run server
     python dashboard.py         --> to run server only
 
+# In a WSGI deploymnt scenario, make sure to add your virtualenv's site-packages to the WSGIPythonPath so that the app can find bztools and others

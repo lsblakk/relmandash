@@ -1,6 +1,0 @@
-[submodule "bztools"]
-	path = bztools
-	url = git@github.com:lianne719/bztools.git
-[submodule "remoteobjects"]
-	path = remoteobjects
-	url = git@github.com:mozilla/remoteobjects.git
