@@ -4,13 +4,12 @@ from flask import Flask, request, session, g, redirect, url_for, \
 from dashboard.utils import *
 from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import timedelta
-import os, site
+import os, sys
 from config import *
 
 my_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__))).split('/relmandash')[0]
-site.addsitedir(my_dir)
-site.addsitedir(os.path.join(my_dir, "bztools/bugzilla"))
-site.addsitedir(os.path.join(my_dir, "remoteobjects"))
+sys.path.append(os.path.join(my_dir, "bztools/bugzilla"))
+sys.path.append(os.path.join(my_dir, "remoteobjects"))
 
 from utils import *
 
