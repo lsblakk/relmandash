@@ -56,6 +56,24 @@ def add_view():
         error = e
     return redirect(url_for('profile', email=email, message=message, error=error))
 
+@app.route('/add_query', methods=['GET', 'POST'])
+def add_query():
+    error = None
+    email=''
+    message = ''
+    error = ''
+    try:
+        if request.method == 'GET':
+            return render_template('addquery.html')
+        else:
+            user = session['user']
+            create_view(user, request)
+            email = user.email
+            message = 'New query created!'
+    except Exception, e:
+        error = e
+    return redirect(url_for('profile', email=email, message=message, error=error))
+
 @app.route('/edit_views/<int:view_id>', methods=['POST'])
 def edit_views(view_id):
     error = ''

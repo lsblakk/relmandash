@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block body %}
+    <form action="{{url_for('add_query')}}" method="post">
+        <h3>Create a query</h3>
+                <p><label for="queryname">Name of query (no spaces)</label><br/>
+                <input type="text" name="queryname" id="queryname" value="" class="text ui-widget-content ui-corner-all" /></p>
+                <p><label for="description">Write a small description of your query</label><br/>
+                <input type="textarea" name="description" id="description" value="" class="text ui-widget-content ui-corner-all" /></p>
+                <p><label for="url">Query url</label><br/>
+                <input type="textarea" name="url" id="url" value="" class="text ui-widget-content ui-corner-all" /></p>
+                <p>Show bug summary
+                <select name="show_summary"><option value="yes">Yes</option>
+                <option value="no" selected=selected>No</option></select></p>
+                <p><label for="runtime">Days to run (0-6) eg: 0 for Monday, 3 for Thursday, 0-4 for every weekday, 0,3 for Monday & Thursday</label><br/>
+                <input type="textarea" name="runtime" id="runtime" value="" class="text ui-widget-content ui-corner-all" /></p>
+            <input type="submit" value="Submit">
+    </form>
+{% endblock %}

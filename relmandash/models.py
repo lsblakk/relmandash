@@ -21,6 +21,27 @@ class Component(db.Model):
     def __repr__(self):
         return '<Component %r from Product %r>' % (self.description, self.product)
 
+class Query(db.Model):
+    __tablename__ = 'Queries'
+    id = db.Column(db.Integer, Sequence('query_id_seq'), primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(100), nullable=False)
+    show_summary = db.Column(db.Boolean, nullable=False)
+    url = db.Column(db.Text)
+    runtime = db.Column(db.String(100), nullable=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
+    
+    def __init__(self, name, description, show_summary, url, runtime, owner):
+        self.name = name
+        self.description = description
+        self.show_summary = show_summary
+        self.url = url
+        self.runtime = runtime
+        self.owner = owner
+        
+    def __repr__(self):
+        return '<Query %r: %r URL: %r Runtime: %r>' % (self.name, self.description, self.url, self.runtime)
+
 class Product(db.Model):
     __tablename__ = 'Products'
     id = db.Column(db.Integer, primary_key=True)
@@ -55,6 +76,7 @@ class User(db.Model):
     salt = db.Column(db.String(100), nullable=False)
     
     views = db.relationship("View", backref='owner', cascade="all, delete, delete-orphan")
+    queries = db.relationship("Query", backref='owner', cascade="all, delete, delete-orphan")
 
     def __init__(self, email, _hash, salt):
         self.email = email

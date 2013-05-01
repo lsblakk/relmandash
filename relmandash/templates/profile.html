@@ -66,11 +66,54 @@
             });
         </script>
     {% endmacro %}
-    
+    {% macro printquery(query) %}
+        <h3 id="header_{{query.id}}" class="ui-widget-header ui-corner-all"><a href="{{ query.url }}">{{query.name}} (click to edit)</a></h3>
+        <div id="query_{{query.id}}" style="display: none">
+            <a href="{{ query.url }}">run query</a>
+            <form action="{{ url_for('edit_query', query_id=query.id) }}" method="post">
+               <table>
+               <tr>
+               <td>Name</td>
+                <td><input type="text" name="queryname" id="queryname" value="{{query.name}}"/></td>
+                </tr>
+                <tr>
+                <td>Description</td>
+                <td><textarea name="description" id="description">{{query.description}}</textarea></td>
+                </tr>
+                <tr>
+                <td>URL</td>
+                <td><textarea name="url" id="url">{{query.url}}</textarea></td>
+                </tr>
+                <td>Runtime</td>
+                <td><textarea name="runtime" id="runtime">{{query.runtime}}</textarea></td>
+                </tr>
+                <tr><td>Show Summary</td>
+                <td>
+                {% if query.show_summary == True %}
+                    <input type="hidden" name="show_summary" value="yes">Yes
+                {% else %}
+                <select name="show_summary"><option value="yes">Yes</option>
+                <option value="no" selected="selected">No</option></select>
+                {%endif%}
+                </td></tr>
+                </table>
+                <input type="submit" name="submit" value="Save changes"> 
+                or 
+                <input type="submit" name="submit" value="Delete query">
+            </form>
+        </div>
+        <script>
+            $('#header_{{query.id}}').click(function() {
+                $("#query_{{query.id}}").toggle();
+                return false;
+            });
+        </script>
+    {% endmacro %}   
     <div id="tabs">
         <ul id="ul_tabs">
             <li><a href="#tab_general">General</a></li>
             <li><a href="#tab_views">Views</a></li>
+            <li><a href="#tab_queries">Queries</a></li>
         </ul>
         <div id="tab_general">
             <h3>General Account Settings</h3>
@@ -105,6 +148,15 @@
             {% endfor %}
             {% endif %}
             <h3><a href="{{url_for('add_view')}}">Add a view</a></h3>
+        </div>
+        <div id="tab_queries">
+            <h3>Current Queries</h3>
+            {% if queries %}
+            {% for query in queries %}
+                {{ printquery(query) }}
+            {% endfor %}
+            {% endif %}
+            <h3><a href="{{url_for('add_query')}}">Add a query</a></h3>
         </div>
     </div>
     

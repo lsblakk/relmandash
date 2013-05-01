@@ -87,6 +87,25 @@ def create_view(user, request):
     except Exception, e:
         raise Exception('Failed to create view: ' + str(e))
 
+def create_query(user, request):
+    try:
+        query_name = request.form['queryname']
+        query_desc = request.form['description']
+        query_url = request.form['url']
+        query_runtime = request.form['runtime']
+        query_show_summary = request.form['show_summary']
+        default = False
+        
+        if query_url == '' or query_desc == '':
+            raise Exception('Empty query not allowed')
+            
+        query = Query(query_name, query_desc, query_show_summary, query_url, query_runtime, user)
+        db.session.add(query)
+
+        db.session.commit()
+    except Exception, e:
+        raise Exception('Failed to create query: ' + str(e))
+
 def verify_account(user, password):
     if user == None:
         raise Exception('Invalid Bugzilla email entered')
@@ -266,9 +285,10 @@ def profile(email, message='', error=''):
         products = Product.query.order_by(Product.description).all()
         defaultview = View.query.filter_by(owner_id=user.id).filter_by(default=True).first()
         otherviews = View.query.filter_by(owner_id=user.id).filter_by(default=False).all()
+        queries = Query.query.filter_by(owner_id=user.id).all()
     except Exception, e:
         error = e
-    return render_template('profile.html', products=products, defaultview=defaultview, otherviews=otherviews, message=message, error=error)
+    return render_template('profile.html', products=products, defaultview=defaultview, otherviews=otherviews, queries=queries, message=message, error=error)
 
 '''
         VIEWS
@@ -367,7 +387,52 @@ def edit_views(view_id):
     except Exception, e:
         error = e
     return redirect(url_for('profile', email=session['user'].email, message=message, error=error))
-    
+
+@app.route('/add_query', methods=['GET', 'POST'])
+def add_query():
+    error = None
+    email=''
+    message = ''
+    error = ''
+    try:
+        initializeSession()
+        if request.method == 'GET':
+            return render_template('addquery.html')
+        else:
+            user = session['user']
+            create_query(user, request)
+            email = user.email
+            message = 'New query created!'
+    except Exception, e:
+        error = e
+    return redirect(url_for('profile', email=email, message=message, error=error))
+ 
+@app.route('/edit_query/<int:query_id>', methods=['POST'])
+def edit_query(query_id):
+    error = ''
+    message = ''
+    email = ''
+    try:
+        initializeSession()
+        if request.form['submit'] == 'Delete query':
+            query = Query.query.filter_by(id=query_id).first()
+            db.session.delete(query)
+            db.session.commit()
+        else:
+            query = Query.query.filter_by(id=query_id).first()
+            if query is not None:
+                query.name = request.form['queryname']
+                query.description = request.form['description']
+                query.url = request.form['url']
+                query.runtime = request.form['runtime']
+                query.show_summary = request.form['show_summary']
+                db.session.commit()
+                message = 'Query updated'
+    except Exception, e:
+        error = e
+    return redirect(url_for('profile', email=session['user'].email, message=message, error=error))
+
+
 @app.route('/')
 def index():
     error = ''
