@@ -41,10 +41,10 @@ ul#ul_tabs li{
     /*text-align: center;*/
 }
 .calendar {
-    width: 18em;
+    width: 14em;
     height: 18em;
     background-image: url("img/calendar.png");
-    background-size:18em 18em;
+    background-size:15em 18em;
     background-repeat:no-repeat;
     background-position: center;
     text-align: center;

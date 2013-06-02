@@ -28,7 +28,7 @@ from dashboard.products import ComponentsTracker
 
 def init_db():
     """Creates the database tables."""
-    db.drop_all()
+    #db.drop_all()
     db.create_all()
     ct = ComponentsTracker()
 
@@ -49,7 +49,7 @@ app.jinja_env.globals.update(getKeywords=getKeywords)
 app.jinja_env.globals.update(getComponents=getComponents)
 
 if __name__ == '__main__':
-    init_db()
+    #init_db()
     app.run()
     
 from relmandash.models import *

@@ -290,6 +290,56 @@ def profile(email, message='', error=''):
         error = e
     return render_template('profile.html', products=products, defaultview=defaultview, otherviews=otherviews, queries=queries, message=message, error=error)
 
+
+'''
+        QUERIES 
+'''
+
+@app.route('/add_query', methods=['GET', 'POST'])
+def add_query():
+    error = None
+    email=''
+    message = ''
+    error = ''
+    try:
+        initializeSession()
+        if request.method == 'GET':
+            return render_template('addquery.html')
+        else:
+            user = session['user']
+            create_query(user, request)
+            email = user.email
+            message = 'New query created!'
+    except Exception, e:
+        error = e
+    return redirect(url_for('profile', email=email, message=message, error=error))
+ 
+@app.route('/edit_query/<int:query_id>', methods=['POST'])
+def edit_query(query_id):
+    error = ''
+    message = ''
+    email = ''
+    try:
+        initializeSession()
+        if request.form['submit'] == 'Delete query':
+            query = Query.query.filter_by(id=query_id).first()
+            db.session.delete(query)
+            db.session.commit()
+        else:
+            query = Query.query.filter_by(id=query_id).first()
+            if query is not None:
+                query.name = request.form['queryname']
+                query.description = request.form['description']
+                query.url = request.form['url']
+                query.runtime = request.form['runtime']
+                query.show_summary = request.form['show_summary']
+                db.session.commit()
+                message = 'Query updated'
+    except Exception, e:
+        error = e
+    return redirect(url_for('profile', email=session['user'].email, message=message, error=error))
+
+
 '''
         VIEWS
 '''
@@ -384,50 +434,6 @@ def edit_views(view_id):
                 view.default = True
             db.session.commit()
             message = 'View updated'
-    except Exception, e:
-        error = e
-    return redirect(url_for('profile', email=session['user'].email, message=message, error=error))
-
-@app.route('/add_query', methods=['GET', 'POST'])
-def add_query():
-    error = None
-    email=''
-    message = ''
-    error = ''
-    try:
-        initializeSession()
-        if request.method == 'GET':
-            return render_template('addquery.html')
-        else:
-            user = session['user']
-            create_query(user, request)
-            email = user.email
-            message = 'New query created!'
-    except Exception, e:
-        error = e
-    return redirect(url_for('profile', email=email, message=message, error=error))
- 
-@app.route('/edit_query/<int:query_id>', methods=['POST'])
-def edit_query(query_id):
-    error = ''
-    message = ''
-    email = ''
-    try:
-        initializeSession()
-        if request.form['submit'] == 'Delete query':
-            query = Query.query.filter_by(id=query_id).first()
-            db.session.delete(query)
-            db.session.commit()
-        else:
-            query = Query.query.filter_by(id=query_id).first()
-            if query is not None:
-                query.name = request.form['queryname']
-                query.description = request.form['description']
-                query.url = request.form['url']
-                query.runtime = request.form['runtime']
-                query.show_summary = request.form['show_summary']
-                db.session.commit()
-                message = 'Query updated'
     except Exception, e:
         error = e
     return redirect(url_for('profile', email=session['user'].email, message=message, error=error))

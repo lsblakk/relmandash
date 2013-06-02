@@ -67,7 +67,7 @@
         </script>
     {% endmacro %}
     {% macro printquery(query) %}
-        <h3 id="header_{{query.id}}" class="ui-widget-header ui-corner-all"><a href="{{ query.url }}">{{query.name}} (click to edit)</a></h3>
+        <h3 id="query_header_{{query.id}}" class="ui-widget-header ui-corner-all"><a href="{{ query.url }}">{{query.name}} (click to edit)</a></h3>
         <div id="query_{{query.id}}" style="display: none">
             <a href="{{ query.url }}">run query</a>
             <form action="{{ url_for('edit_query', query_id=query.id) }}" method="post">
@@ -103,7 +103,7 @@
             </form>
         </div>
         <script>
-            $('#header_{{query.id}}').click(function() {
+            $('#query_header_{{query.id}}').click(function() {
                 $("#query_{{query.id}}").toggle();
                 return false;
             });
