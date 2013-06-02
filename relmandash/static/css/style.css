@@ -1,12 +1,55 @@
 .header {
     padding-left: 30px;
 }
+
+h3 {
+
+
+}
+
 h4 {
     padding-left: 30px;
 }
+
+.box h3{
+    text-align:center;
+    position:relative;
+    top:5px;
+}
+
+.no-bullets ul{
+    list-style: none;
+    padding-left: 0px;
+}
+
+.no-bullets li{
+    margin: 5px;
+    padding: 5px;
+    background-color: powderblue;
+}
+
+.box {
+    width:100%;
+    height:30px;
+    background:#fff;
+    margin:2px auto;
+}
+/*==================================================
+ * Effect 1
+ * ===============================================*/
+.effect1{
+    -webkit-box-shadow: 0 10px 6px -6px #777;
+       -moz-box-shadow: 0 10px 6px -6px #777;
+            box-shadow: 0 10px 6px -6px #777;
+}
+
 tag {
    padding: 5px;
    cursor: pointer;
+}
+
+small {
+    font-size: 65%;
 }
 .components {
     -moz-border-radius: 15px;

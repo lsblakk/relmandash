@@ -67,7 +67,7 @@
         </script>
     {% endmacro %}
     {% macro printquery(query) %}
-        <h3 id="query_header_{{query.id}}" class="ui-widget-header ui-corner-all"><a href="{{ query.url }}">{{query.name}} (click to edit)</a></h3>
+        <li id="query_header_{{query.id}}" class=""><a href="{{ query.url }}">{{query.name}} <small>(click to edit)</small></a></li>
         <div id="query_{{query.id}}" style="display: none">
             <a href="{{ query.url }}">run query</a>
             <form action="{{ url_for('edit_query', query_id=query.id) }}" method="post">
@@ -150,13 +150,34 @@
             <h3><a href="{{url_for('add_view')}}">Add a view</a></h3>
         </div>
         <div id="tab_queries">
-            <h3>Current Queries</h3>
-            {% if queries %}
-            {% for query in queries %}
-                {{ printquery(query) }}
-            {% endfor %}
-            {% endif %}
-            <h3><a href="{{url_for('add_query')}}">Add a query</a></h3>
+            <p>
+            When adding queries you can use wiki.m.o TEMPLATE syntax, eg: <code> {{ '{{' }}BETA_VERSION{{ '}}' }} </code><br />
+            <br />Available syntax options and their currently values are:
+            <code>
+                <ul>
+                    <li>{{ '{{' }}BETA_VERSION{{ '}}' }} = {{ session.vt.beta }}</li>
+                    <li>{{ '{{' }}AURORA_VERSION{{ '}}' }} = {{ session.vt.aurora }}</li>
+                    <li>{{ '{{' }}CENTRAL_VERSION{{ '}}' }} = {{ session.vt.central }}</li>
+                    <li>{{ '{{' }}ESR_VERSION{{ '}}' }} = {{ session.vt.esr }}</li>
+                    <li>{{ '{{' }}NEXT_VERSION{{ '}}' }} = {{ session.vt.next }}</li>
+                    <li>{{ '{{' }}FIREFOX_SHIP_DATE{{ '}}' }} = {{ session.vt.shipdate }}</li>
+                    <li>{{ '{{' }}CURRENT_CYCLE{{ '}}' }} = {{ session.vt.cycle }}</li>
+                </ul>
+            </code>
+            </p>
+            <div class="box effect1">
+                <h3>Saved Queries</h3>
+            </div>
+            <div class="no-bullets">
+                <ul>
+                {% if queries %}
+                {% for query in queries %}
+                    {{ printquery(query) }}
+                {% endfor %}
+                {% endif %}
+                </ul>
+            </div>
+            <a href="{{url_for('add_query')}}">Add a query</a>
         </div>
     </div>
     

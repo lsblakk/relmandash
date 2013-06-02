@@ -4,6 +4,7 @@
 from relmandash import app
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy import Sequence, ForeignKey
+from dashboard.versions import VersionTracker
 
 db = SQLAlchemy(app)
 
@@ -32,15 +33,24 @@ class Query(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
     
     def __init__(self, name, description, show_summary, url, runtime, owner):
+        self.vt = VersionTracker()
         self.name = name
         self.description = description
         self.show_summary = show_summary
-        self.url = url
+        # pass url through interpolation filters here before insertion to db
+        self.url = self.__interpolate__(url)
         self.runtime = runtime
         self.owner = owner
         
     def __repr__(self):
-        return '<Query %r: %r URL: %r Runtime: %r>' % (self.name, self.description, self.url, self.runtime)
+        return "%s(%r)" % (self.__class__, self.__dict__)
+
+    def __interpolate__(self, url):
+        '''Takes values from the url that are in the form of {{BETA_VERSION}} and replaces with current values from wiki.m.o'''
+        for k,v in self.vt.version_map.items():
+            if k in url:
+                url = url.replace(k,v)
+        return url
 
 class Product(db.Model):
     __tablename__ = 'Products'
