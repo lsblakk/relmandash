@@ -1,21 +1,36 @@
-from flask import Flask, request, session, redirect, url_for, render_template
+from flask import session, render_template
 from bugzilla.agents import BMOAgent
 from dashboard.options import *
 from dashboard.versions import *
 from dashboard.utils import *
-import os
-import hashlib
+import urllib
+
 
 def initializeSession():
     if 'initialized' not in session.keys():
         session['initialized'] = True
-        session['bmo'] = BMOAgent('','')
+        session['bmo'] = BMOAgent('', '')
         session['vt'] = VersionTracker()
+
+
+def query_url_to_dict(url):
+    if (';')in url:
+        fields_and_values = url.split("?")[1].split(";")
+    else:
+        fields_and_values = url.split("?")[1].split("&")
+    d = {}
+
+    for pair in fields_and_values:
+        (key, val) = pair.split("=")
+        if key != "list_id":
+            d[key] = urllib.unquote(val)
+    return d
+
 
 def view_individual(email):
     error = ''
-    mainlist=[]
-    followlist=[]
+    mainlist = []
+    followlist = []
     pattern = re.compile('^[\w._%+-]+@[\w.-]+\.[A-Za-z]{2,6}$')
     try:
         if pattern.match(email):
@@ -29,6 +44,23 @@ def view_individual(email):
     except Exception, e:
         error = 'Individual view: ' + str(e)
     return render_template('individual.html', error=error, email=email, buglist=mainlist, followlist=followlist)
+
+
+def getUserQueryBugs(query):
+    buglist = []
+    try:
+        initializeSession()
+        bmo = session['bmo']
+        options = query_url_to_dict(query)
+        try:
+            buglist = bmo.get_bug_list(options)
+            print buglist
+        except:
+            raise Exception('Bad query: Possible reasons might include bad authentication, results too large, or just plain bad query.')
+    except Exception, e:
+        raise Exception("Failed to retrieve user query buglist: " + str(e))
+    return buglist
+
 
 def getProdCompBugs(product, components):
     buglist = []
@@ -44,6 +76,7 @@ def getProdCompBugs(product, components):
         raise Exception("Failed to retrieve product/component bugs: " + str(e))
     return buglist
 
+
 def getAssignedBugs(emails):
     mainlist = []
     try:
@@ -57,6 +90,7 @@ def getAssignedBugs(emails):
     except Exception, e:
         raise Exception("Failed to retrieve assigned bugs: " + str(e))
     return mainlist
+
 
 def getToFollowBugs(emails):
     followlist = []

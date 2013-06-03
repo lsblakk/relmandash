@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
+<div id="container">
     <form action="{{url_for('add_view')}}" method="post">
         <h3>Create a default view</h3>
                 <p><label for="viewname">Name of view</label><br/>
@@ -28,4 +29,5 @@
                 <div id="addemail"><p>Add another email</p></div>
             <input type="submit" value="Submit">
     </form>
+</div>
 {% endblock %}

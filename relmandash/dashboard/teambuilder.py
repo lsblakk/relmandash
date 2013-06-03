@@ -6,11 +6,12 @@ import exceptions
 raw_data = []
 products_components = {}
 
+
 class TeamParser(HTMLParser):
 
     def handle_data(self, data):
         raw_data.append(data)
-        
+
     def print_data(self):
         for data in raw_data:
             if data.strip():
@@ -28,7 +29,7 @@ try:
     product_count = 1
     product_encountered = False
     component_encountered = False
-    
+
     for line in raw_data:
         if line.strip():
             if product_encountered:
@@ -51,10 +52,10 @@ try:
             except exceptions.ValueError:
                 if line == 'Bugzilla Component(s):':
                     component_encountered = True
-        
+
     for k, v in products_components.iteritems():
         print k, ": ", v
-            
+
 except URLError, e:
     if hasattr(e, 'reason'):
         print 'We failed to reach a server.'
@@ -62,4 +63,3 @@ except URLError, e:
     elif hasattr(e, 'code'):
         print 'The server couldn\'t fulfill the request.'
         print 'Error code: ', e.code
-            

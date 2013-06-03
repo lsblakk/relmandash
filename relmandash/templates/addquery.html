@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
+<div id="container">
     <form action="{{url_for('add_query')}}" method="post">
         <h3>Create a query</h3>
                 <p><label for="queryname">Name of query (no spaces)</label><br/>
@@ -15,4 +16,5 @@
                 <input type="textarea" name="runtime" id="runtime" value="" class="text ui-widget-content ui-corner-all" /></p>
             <input type="submit" value="Submit">
     </form>
+</div>
 {% endblock %}

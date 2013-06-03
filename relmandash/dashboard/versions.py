@@ -1,5 +1,6 @@
 from report import getTemplateValue
 
+
 class VersionTracker:
     beta = ''
     aurora = ''
@@ -10,7 +11,7 @@ class VersionTracker:
     cycle = ''
     baseurl = "https://wiki.mozilla.org/Template:"
     version_map = {}
-    
+
     def __init__(self):
         self.beta = getTemplateValue(self.baseurl + 'BETA_VERSION')
         self.version_map['{{BETA_VERSION}}'] = self.beta

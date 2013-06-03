@@ -2,7 +2,7 @@ def getAssignedOptions(emails, vt):
     options = {
         'email1':            emails,
         'email1_type':       'contains_any_words',
-        'email1_assigned_to':1,
+        'email1_assigned_to': 1,
         'field0-0-0':        'status',
         'type0-0-0':         'contains_any_words',
         'value0-0-0':        'NEW, ASSIGNED, REOPENED, UNCONFIRMED',
@@ -18,7 +18,8 @@ def getAssignedOptions(emails, vt):
         'include_fields':    '_all',
     }
     return options
-    
+
+
 def getToFollowUp(emails, vt):
     options = {
         'email1':           emails,
@@ -52,7 +53,8 @@ def getToFollowUp(emails, vt):
         'include_fields':   '_all',
     }
     return options
-    
+
+
 def getNeedsInfo(emails, vt):
     options = {
         'field0-0-0':       'cf_tracking_firefox' + str(vt.beta),
@@ -79,7 +81,8 @@ def getNeedsInfo(emails, vt):
         'include_fields':   '_all',
     }
     return options
-    
+
+
 def getProdComp(product, components, vt):
     options = {
         'field0-0-0':        'status',

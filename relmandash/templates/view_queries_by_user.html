@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block body %}
+    {% for query in queries %}
+        {% set buglist = getUserQueryBugs(query.url) %}
+        {% if buglist %}
+            <div id={{ query.name }} class="bugs_display">
+                <table>
+        {% for bug in buglist %}
+        <tr>
+            <td><a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">{{bug.id}}</a></td>
+            <td>{{bug.component}}</td>
+            <td>{{bug.severity}}</td>
+            <td>{{bug.priority}}</td>
+            <td>{{bug.summary|truncate(80)}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

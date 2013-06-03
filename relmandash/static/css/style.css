@@ -1,10 +1,11 @@
-.header {
-    padding-left: 30px;
+#container {
+    background: whitesmoke;
+    margin: 20px;
+    padding: 20px;
 }
 
-h3 {
-
-
+.header {
+    padding-left: 30px;
 }
 
 h4 {

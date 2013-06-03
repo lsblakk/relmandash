@@ -151,8 +151,9 @@
         </div>
         <div id="tab_queries">
             <p>
-            When adding queries you can use wiki.m.o TEMPLATE syntax, eg: <code> {{ '{{' }}BETA_VERSION{{ '}}' }} </code><br />
-            <br />Available syntax options and their currently values are:
+            When adding queries you can use wiki.m.o TEMPLATE syntax, eg: 
+            <code> {{ '{{' }}BETA_VERSION{{ '}}' }} </code><br />
+            <br />Available syntax options and their current values are:
             <code>
                 <ul>
                     <li>{{ '{{' }}BETA_VERSION{{ '}}' }} = {{ session.vt.beta }}</li>
@@ -177,7 +178,9 @@
                 {% endif %}
                 </ul>
             </div>
-            <a href="{{url_for('add_query')}}">Add a query</a>
+            <form action="{{ url_for('add_query') }}" method="get">
+                <input type="submit" value="New Query" name="Add a query">
+            </form>
         </div>
     </div>
     

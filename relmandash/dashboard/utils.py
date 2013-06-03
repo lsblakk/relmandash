@@ -1,19 +1,21 @@
 from options import getNeedsInfo
 
-def getTrackedBugs(version=0,buglist=[]):
+
+def getTrackedBugs(version=0, buglist=[]):
     tracked_bugs = []
     if version != 0 and buglist != []:
         untracked_statuses = ['fixed', 'wontfix', 'verified', 'disabled', 'unaffected', 'verified disabled']
         for bug in buglist:
             is_tracked = False
             if isTracked(bug, version):
-                status = getattr(bug,'cf_status_firefox'+str(version))
+                status = getattr(bug, 'cf_status_firefox'+str(version))
                 if status not in untracked_statuses:
                     is_tracked = True
             if is_tracked:
                 tracked_bugs.append(bug)
     return tracked_bugs
-    
+
+
 def getSecurityBugs(buglist=[]):
     security_bugs = []
     if buglist != []:
@@ -31,10 +33,10 @@ def getSecurityBugs(buglist=[]):
                 index += 1
     return security_bugs
 
-def getToNominateBugs(beta,aurora,buglist=[]):
+
+def getToNominateBugs(beta, aurora, buglist=[]):
     to_nominate = []
     if buglist != []:
-        index = 0
         try:
             for bug in buglist:
                 statusBeta = getattr(bug, 'cf_status_firefox'+str(beta))
@@ -57,11 +59,11 @@ def getToNominateBugs(beta,aurora,buglist=[]):
             pass
         print len(to_nominate)
     return to_nominate
-    
+
+
 def getToApproveBugs(buglist=[]):
     to_approve = []
     if buglist != []:
-        index = 0
         for bug in buglist:
             isToApprove = False
             if bug.attachments:
@@ -75,11 +77,11 @@ def getToApproveBugs(buglist=[]):
                 if isToApprove:
                     to_approve.append(bug)
     return to_approve
-    
-def getToUpliftBugs(beta,aurora,buglist=[]):
+
+
+def getToUpliftBugs(beta, aurora, buglist=[]):
     to_uplift = []
     if buglist != []:
-        index = 0
         try:
             for bug in buglist:
                 isToUplift = False
@@ -102,7 +104,8 @@ def getToUpliftBugs(beta,aurora,buglist=[]):
         except Exception, e:
             raise Exception('Retrieving bugs to be uplifted failed: '+str(e))
     return to_uplift
-    
+
+
 def getNeedsInfoBugs(buglist=[], emails='', bmo=None, vt=None):
     needs_info = []
     if emails != '':
@@ -117,7 +120,8 @@ def getNeedsInfoBugs(buglist=[], emails='', bmo=None, vt=None):
                 if flag.name == 'needinfo' and bug not in needs_info and (isTracked(bug, vt.beta) or isTracked(bug, vt.aurora) or isTracked(bug, vt.esr)):
                     needs_info.append(bug)
     return needs_info
-    
+
+
 def getUnassignedBugs(buglist):
     unassigned = []
     unassigned_names = ['nobody', 'nobody@mozilla.org', 'general']
@@ -126,6 +130,7 @@ def getUnassignedBugs(buglist):
             unassigned.append(bug)
     return unassigned
 
+
 def getKeywords(buglist):
     keywords = []
     for bug in buglist:
@@ -133,7 +138,8 @@ def getKeywords(buglist):
             if keyword not in keywords:
                 keywords.append(keyword)
     return keywords
-    
+
+
 def getComponents(buglist):
     components = []
     for bug in buglist:
@@ -142,11 +148,12 @@ def getComponents(buglist):
     components.sort()
     return components
 
-def isTracked(bug,version):
+
+def isTracked(bug, version):
     try:
         return (getattr(bug, 'cf_tracking_firefox'+str(version)) == '+'
-            and (getattr(bug, 'cf_status_firefox'+str(version)) == 'affected' 
-            or getattr(bug, 'cf_status_firefox'+str(version)) == '---'))
+                and (getattr(bug, 'cf_status_firefox'+str(version)) == 'affected'
+                or getattr(bug, 'cf_status_firefox'+str(version)) == '---'))
     except AttributeError:
         print 'bug version ' + str(version) + 'does not exist'
     return False
