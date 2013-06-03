@@ -37,20 +37,13 @@ class Query(db.Model):
         self.name = name
         self.description = description
         self.show_summary = show_summary
-        # pass url through interpolation filters here before insertion to db
-        self.url = self.__interpolate__(url)
+        self.url = url
         self.runtime = runtime
         self.owner = owner
         
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.__dict__)
 
-    def __interpolate__(self, url):
-        '''Takes values from the url that are in the form of {{BETA_VERSION}} and replaces with current values from wiki.m.o'''
-        for k,v in self.vt.version_map.items():
-            if k in url:
-                url = url.replace(k,v)
-        return url
 
 class Product(db.Model):
     __tablename__ = 'Products'

@@ -16,6 +16,15 @@ from utils import *
 '''
 
 
+def urlInterpolate(url):
+        '''Takes values from the url that are in the form of {{BETA_VERSION}} and replaces with current values from wiki.m.o'''
+        vt = VersionTracker()
+        for k, v in vt.version_map.items():
+            if k in url:
+                url = url.replace(k, v)
+        return url
+
+
 def loginSession(user, password):
     initializeSession()
     session['logged_in'] = True
@@ -90,12 +99,12 @@ def create_query(user, request):
     try:
         query_name = request.form['queryname']
         query_desc = request.form['description']
-        query_url = request.form['url']
-        query_runtime = request.form['runtime']
-        query_show_summary = request.form['show_summary']
-
+        # pass the url through string interpolation first
+        query_url = urlInterpolate(request.form['url'])
         if query_url == '' or query_desc == '':
             raise Exception('Empty query not allowed')
+        query_runtime = request.form['runtime']
+        query_show_summary = request.form['show_summary']
 
         query = Query(query_name, query_desc, query_show_summary, query_url, query_runtime, user)
         db.session.add(query)
@@ -335,7 +344,8 @@ def edit_query(query_id):
             if query is not None:
                 query.name = request.form['queryname']
                 query.description = request.form['description']
-                query.url = request.form['url']
+                # pass url through interpolation
+                query.url = urlInterpolate(request.form['url'])
                 query.runtime = request.form['runtime']
                 query.show_summary = request.form['show_summary']
                 db.session.commit()
