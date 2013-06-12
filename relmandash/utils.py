@@ -4,6 +4,7 @@ from dashboard.options import *
 from dashboard.versions import *
 from dashboard.utils import *
 import urllib
+import re
 
 
 def initializeSession():
@@ -25,25 +26,6 @@ def query_url_to_dict(url):
         if key != "list_id":
             d[key] = urllib.unquote(val)
     return d
-
-
-def view_individual(email):
-    error = ''
-    mainlist = []
-    followlist = []
-    pattern = re.compile('^[\w._%+-]+@[\w.-]+\.[A-Za-z]{2,6}$')
-    try:
-        if pattern.match(email):
-            mainlist = getAssignedBugs(email)
-            if email != 'nobody@mozilla.org':
-                followlist = getToFollowBugs(email)
-            print len(mainlist)
-            print len(followlist)
-        else:
-            raise Exception('Invalid email address')
-    except Exception, e:
-        error = 'Individual view: ' + str(e)
-    return render_template('individual.html', error=error, email=email, buglist=mainlist, followlist=followlist)
 
 
 def getUserQueryBugs(query):

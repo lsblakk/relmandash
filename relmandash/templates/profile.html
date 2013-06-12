@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
     {% macro printview(view) %}
-        <h3 id="header_{{view.id}}" class="ui-widget-header ui-corner-all"><a href="{{url_for('view_custom', view_id=view.id)}}">{{view.name}} {%if view.default%}(Default){%endif%}</a></h3>
+        <li id="header_{{view.id}}" class="ui-corner-all"><a href="{{url_for('view_custom', view_id=view.id)}}">{{view.name}}{%if view.default%}(Default){%endif%} <small>(click to edit)</small></a></li>
         <div id="view_{{view.id}}" style="display: none">
             <a href="{{url_for('view_custom', view_id=view.id)}}">visit</a>
             <form action="{{ url_for('edit_views', view_id=view.id) }}" method="post">
@@ -67,9 +67,9 @@
         </script>
     {% endmacro %}
     {% macro printquery(query) %}
-        <li id="query_header_{{query.id}}" class=""><a href="{{ query.url }}">{{query.name}} <small>(click to edit)</small></a></li>
+        <li id="query_header_{{query.id}}" class="ui-corner-all"><a href="{{ query.url }}">{{query.name}} <small>(click to edit)</small></a></li>
         <div id="query_{{query.id}}" style="display: none">
-            <a href="{{ query.url }}">run query</a>
+            <a href="{{ query.to_string() }}">run query</a>
             <form action="{{ url_for('edit_query', query_id=query.id) }}" method="post">
                <table>
                <tr>
@@ -84,9 +84,6 @@
                 <td>URL</td>
                 <td><textarea name="url" id="url">{{query.url}}</textarea></td>
                 </tr>
-                <td>Runtime</td>
-                <td><textarea name="runtime" id="runtime">{{query.runtime}}</textarea></td>
-                </tr>
                 <tr><td>Show Summary</td>
                 <td>
                 {% if query.show_summary == True %}
@@ -96,6 +93,17 @@
                 <option value="no" selected="selected">No</option></select>
                 {%endif%}
                 </td></tr>
+                <tr>
+                <td>Actions</td>
+                <td>
+                {% if actions %}
+                    {% for action in actions %}
+                        <select name="actions">
+                            <option value="{{ action.id }}" {% if action in query.actions %}selected=selected{% endif %}>{{ action.name }}</option>
+                    {% endfor %}</td>
+                {% else %}<td>No actions created yet</td>
+                {% endif %}
+                </tr>
                 </table>
                 <input type="submit" name="submit" value="Save changes"> 
                 or 
@@ -108,12 +116,47 @@
                 return false;
             });
         </script>
-    {% endmacro %}   
+    {% endmacro %}
+    {% macro printaction(action) %}
+        <li id="action_header_{{action.id}}" class="ui-corner-all"><a href="{{ action.name }}">{{action.name}} <small>(click to edit)</small></a></li>
+        <div id="action_{{action.id}}" style="display: none">
+            <form action="{{ url_for('edit_action', action_id=action.id) }}" method="post">
+               <table>
+               <tr>
+               <td>Name</td>
+                <td><input type="text" name="actionname" id="actionname" value="{{action.name}}"/></td>
+                </tr>
+                <tr>
+                <td>Script</td>
+                <td><textarea name="script" id="script" height="500px" width="90px">{{action.script}}</textarea></td>
+                </tr>
+                <tr>
+                <td>Extension</td>
+                <td><input type="text" name="extension" id="extension" value="{{action.extension}}"/></td>
+                </tr>
+                <tr>
+                <td>Runtime</td>
+                <td><textarea name="runtime" id="runtime">{{action.runtime}}</textarea></td>
+                </tr>
+                </table>
+                <input type="submit" name="submit" value="Save changes"> 
+                or 
+                <input type="submit" name="submit" value="Delete action">
+            </form>
+        </div>
+        <script>
+            $('#action_header_{{action.id}}').click(function() {
+                $("#action_{{action.id}}").toggle();
+                return false;
+            });
+        </script>
+    {% endmacro %} 
     <div id="tabs">
         <ul id="ul_tabs">
             <li><a href="#tab_general">General</a></li>
             <li><a href="#tab_views">Views</a></li>
             <li><a href="#tab_queries">Queries</a></li>
+            <li><a href="#tab_actions">Actions</a></li>
         </ul>
         <div id="tab_general">
             <h3>General Account Settings</h3>
@@ -140,14 +183,22 @@
             </form>
         </div>
         <div id="tab_views">
-            <h3>Views Settings</h3>
-            {% if defaultview %}{{ printview(defaultview) }}{% endif %}
-            {% if otherviews %}
-            {% for view in otherviews %}
-                {{ printview(view) }}
-            {% endfor %}
-            {% endif %}
-            <h3><a href="{{url_for('add_view')}}">Add a view</a></h3>
+            <div class="box effect1 ui-corner-all">
+                <h3>Saved Views</h3>
+            </div>
+            <div class="no-bullets">
+                <ul>
+                    {% if defaultview %}{{ printview(defaultview) }}{% endif %}
+                    {% if otherviews %}
+                    {% for view in otherviews %}
+                        {{ printview(view) }}
+                    {% endfor %}
+                    {% endif %}
+                </ul>
+                <form action="{{ url_for('add_view') }}" method="get">
+                    <input type="submit" value="New Query" name="Add a query">
+                </form>
+            </div>
         </div>
         <div id="tab_queries">
             <p>
@@ -166,7 +217,7 @@
                 </ul>
             </code>
             </p>
-            <div class="box effect1">
+            <div class="box effect1 ui-corner-all">
                 <h3>Saved Queries</h3>
             </div>
             <div class="no-bullets">
@@ -178,8 +229,29 @@
                 {% endif %}
                 </ul>
             </div>
+            <h4><a href="{{ url_for('view_queries_by_user', user_id=session.user.id) }}">Run All Saved Queries</a></h4>
             <form action="{{ url_for('add_query') }}" method="get">
                 <input type="submit" value="New Query" name="Add a query">
+            </form>
+        </div>
+        <div id="tab_actions">
+            <p>
+            Put the body of the script in the script box, then the extension (.py)
+            </p>
+            <div class="box effect1 ui-corner-all">
+                <h3>Saved Actions</h3>
+            </div>
+            <div class="no-bullets">
+                <ul>
+                {% if actions %}
+                {% for action in actions %}
+                    {{ printaction(action) }}
+                {% endfor %}
+                {% endif %}
+                </ul>
+            </div>
+            <form action="{{ url_for('add_action') }}" method="get">
+                <input type="submit" value="New Action" name="Add an action">
             </form>
         </div>
     </div>

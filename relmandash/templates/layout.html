@@ -21,11 +21,12 @@
 <body>
 <!-- <a href="http://www.mozilla.org/" id="tabzilla">mozilla</a> -->
 <span class="user">
+    <p><a href="{{ url_for('index') }}">Home</a>|
     {% if session.logged_in %}
-        <p>logged in as <a href="{{ url_for('profile', email=session.user.email) }}">{{ session.user.email }}</a> | 
+        logged in as <a href="{{ url_for('profile', email=session.user.email) }}">{{ session.user.email }}</a> | 
         <a href="{{ url_for('logout') }}">Logout</a></p>
     {% else %}
-    <p><a href="{{ url_for('login') }}">Login</a> | 
+    <a href="{{ url_for('login') }}">Login</a> | 
     <a href="{{ url_for('signup') }}">Sign Up</a></p>
     {% endif %}
     </span>

@@ -30,7 +30,6 @@ def init_db():
     """Creates the database tables."""
     #db.drop_all()
     db.create_all()
-    ct = ComponentsTracker()
 
 
 @app.teardown_appcontext

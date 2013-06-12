@@ -1,3 +1,9 @@
 Things to do:
  ☐ get view of all a user's queries
+ ☐ check queries are valid before running, don't pull the ones that don't work
+ ☐ timeout on queries running
+ ☐ put each query in its own tab
+ ☐ allow for selecting only certain queries
+ ☐ query should *not* be interpolated when creating/saving, only on pulling it out
+ ☐ display the whole query
  ☐ need to add code to utils.py for pulling a per-query buglist and handing to macros

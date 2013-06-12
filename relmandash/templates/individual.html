@@ -1,13 +1,13 @@
 {% extends "layout.html" %}
 {% block body %}
-    <div id="tabs">
-        <ul id="ul_tabs">
-            <li><a href="#tab_main">Main <span class="length"></span></a></li>
-            <li><a href="#tab_nominate">To nominate <span class="length"></span></a></li>
-            <li><a href="#tab_approve">To approve <span class="length"></span></a></li>
-            <li><a href="#tab_uplift">To uplift <span class="length"></span></a></li>
-        </ul>
-        <p id="selectsort">Sort by:
+<div id="tabs">
+    <ul id="ul_tabs">
+    {% for query in queries %}
+    <!-- print a tab for each query name, then load those tabs up down below (will need to sort in backend so they are the same each time) -->
+            <li><a href="#tab_{{ query.name }}">{{ query.name }} <span class="length"></span></a></li>
+    {% endfor %}
+    </ul>
+    <p id="selectsort">Sort by:
         <select id="sort" onchange="sortTables();">
             <option>Severity</option>
             <option>Security</option>
@@ -15,99 +15,32 @@
             <option>ID ascending</option>
             <option>ID descending</option>
             <option>Last modified</option>
-        </select></p>
-        <div id="tab_main">
-            <span class="empty"></span>
-            <div id="tab_info" class="bugs_display">
-                <h3>Needs Info <span class="length"></span></h3>
+        </select>
+    </p>
+    <div id="tab_main">
+        <span class="empty"></span>
+    {% for query in queries %}
+            <div id="tab_{{ query.name }}" class="bugs_display">
+                <h3>{{ query.name }} <span class="length"></span></h3>
                 <span class="empty"></span>
             </div>
-            <div id="tab_beta" class="bugs_display">
-                <h3>Tracked Beta Bugs <span class="length"></span></h3>
-                <span class="empty"></span>
-            </div>
-            <div id="tab_aurora" class="bugs_display">
-                <h3>Tracked Aurora Bugs <span class="length"></span></h3>
-                <span class="empty"></span>
-            </div>
-            <div id="tab_esr" class="bugs_display">
-                <h3>Tracked ESR Bugs <span class="length"></span></h3>
-                <span class="empty"></span>
-            </div>
-        </div>
-        <div id="tab_nominate" class="bugs_display">
-            <span class="empty"></span>
-        </div>
-        <div id="tab_approve" class="bugs_display">
-            <span class="empty"></span>
-        </div>
-        <div id="tab_uplift" class="bugs_display">
-            <span class="empty"></span>
-        </div>
+    {% endfor %}
     </div>
+</div>
     <div id="checkerbox">
-        <div class="card" title="Needs info">
+        {% for query in queries %}
+        <div class="card" title="{{ query.name }}">
             <h1><span class="length tab_info"></span></h1>
-            <h3>Needs info</h3>
+            <h3>{{ query.name }}</h3>
         </div>
-        <div class="card" title="Tracking Beta">
-            <h1><span class="length tab_beta"></span></h1>
-            <h3>Tracking Beta</h3>
-        </div>
-        <div class="card" title="Tracking Aurora">
-            <h1><span class="length tab_aurora"></span></h1>
-            <h3>Tracking Aurora</h3>
-        </div>
-        <div class="card" title="Tracking ESR">
-            <h1><span class="length tab_esr"></span></h1>
-            <h3>Tracking ESR</h3>
-        </div>
-        <div class="card" title="To nominate">
-            <h1><span class="length tab_nominate"></span></h1>
-            <h3>To nominate</h3>
-        </div>
-        <div class="card" title="To approve">
-            <h1><span class="length tab_approve"></span></h1>
-            <h3>To approve</h3>
-        </div>
-        <div class="card" title="To uplift">
-            <h1><span class="length tab_uplift"></span></h1>
-            <h3>To uplift</h3>
-        </div>
+        {% endfor %}
     </div>
     {% from "_helpers.html" import printEmptyTables %}
     {% from "_helpers.html" import printBugs %}
     {{ printEmptyTables() }}
-    {% set beta = getTrackedBugs(session.vt.beta, buglist) %}
-    {% if beta %}
-        {{ printBugs(beta, 'beta') }}
-    {% endif %}
-    {% set aurora = getTrackedBugs(session.vt.aurora, buglist) %}
-    {% if aurora %}
-        {{ printBugs(aurora, 'aurora') }}
-    {% endif %}
-    {% set esr = getTrackedBugs(session.vt.esr, buglist) %}
-    {% if esr %}
-        {{ printBugs(esr, 'esr') }}
-    {% endif %}
-    {% set info = getNeedsInfoBugs(emails=email, bmo=session.bmo, vt=session.vt) %}
-    {% if email != 'nobody@mozilla.org' %}
-        {% if info %}
-            {{ printBugs(info, 'info') }}
-        {% endif %}
-        {% set nominate = getToNominateBugs(session.vt.beta, session.vt.aurora, followlist) %}
-        {% if nominate %}
-            {{ printBugs(nominate, 'nominate') }}
-        {% endif %}
-        {% set approve = getToApproveBugs(followlist) %}
-        {% if approve %}
-            {{ printBugs(approve, 'approve') }}
-        {% endif %}
-        {% set uplift = getToUpliftBugs(session.vt.beta, session.vt.aurora, followlist) %}
-        {% if uplift %}
-            {{ printBugs(uplift, 'uplift') }}
-        {% endif %}
-    {% endif %}
+    {% for query in queries %}
+        {{ printBugs(query.results, query.name) }}
+    {% endfor %}
     <script>
         $(function() {
             $("#tabs").tabs();
