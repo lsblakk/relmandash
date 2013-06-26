@@ -11,7 +11,7 @@
     </script>
 {% endmacro %}
 
-{% macro printListRow(tab, bug) %}
+{% macro printListRow(bug, tab) %}
     <script>
         if ($('div#tab_{{tab}}').find(".{{bug.id}}").length == 0) {
             var assigned = "{{ bug.assigned_to.name }}";
@@ -53,7 +53,7 @@
 {% macro printBugs(bugs, tab) %}
     {% if bugs %}
         {% for bug in bugs %}
-            {{ printListRow(tab, bug) }}
+            {{ printListRow(bug, tab) }}
         {% endfor %}
     {% endif %}
 {%- endmacro %}

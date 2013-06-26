@@ -30,10 +30,11 @@ def view_individual(user):
     error = ''
     queries = []
     try:
+        bmo = session['bmo']
         queries = Query.query.filter_by(owner_id=user.id).all()
         for query in queries:
-            query.results = bmo.get_bug_list(query_url_to_dict(query.url))
-            print len(query.results)
+            query.results = bmo.get_bug_list(query_url_to_dict(query.urlInterpolate()))
+            print "Found %s bugs" % len(query.results)
     except Exception, e:
         error = 'Individual view: ' + str(e)
     return render_template('individual.html', error=error, queries=queries, user=user)

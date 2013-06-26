@@ -4,7 +4,7 @@
     <ul id="ul_tabs">
     {% for query in queries %}
     <!-- print a tab for each query name, then load those tabs up down below (will need to sort in backend so they are the same each time) -->
-            <li><a href="#tab_{{ query.name }}">{{ query.name }} <span class="length"></span></a></li>
+            <li><a href="#tab_{{ query.name.replace(' ', '_') }}">{{ query.name }} <span class="length"></span></a></li>
     {% endfor %}
     </ul>
     <p id="selectsort">Sort by:
@@ -17,29 +17,25 @@
             <option>Last modified</option>
         </select>
     </p>
-    <div id="tab_main">
-        <span class="empty"></span>
     {% for query in queries %}
-            <div id="tab_{{ query.name }}" class="bugs_display">
+            <div id="tab_{{ query.name.replace(' ', '_') }}" class="bugs_display">
                 <h3>{{ query.name }} <span class="length"></span></h3>
-                <span class="empty"></span>
             </div>
     {% endfor %}
-    </div>
 </div>
-    <div id="checkerbox">
+<div id="checkerbox">
         {% for query in queries %}
         <div class="card" title="{{ query.name }}">
             <h1><span class="length tab_info"></span></h1>
             <h3>{{ query.name }}</h3>
         </div>
         {% endfor %}
-    </div>
+</div>
     {% from "_helpers.html" import printEmptyTables %}
     {% from "_helpers.html" import printBugs %}
     {{ printEmptyTables() }}
     {% for query in queries %}
-        {{ printBugs(query.results, query.name) }}
+        {{ printBugs(query.results, query.name.replace(' ', '_')) }}
     {% endfor %}
     <script>
         $(function() {

@@ -2,6 +2,7 @@ from report import getTemplateValue
 
 
 class VersionTracker:
+    current_release = ''
     beta = ''
     aurora = ''
     central = ''
@@ -13,6 +14,8 @@ class VersionTracker:
     version_map = {}
 
     def __init__(self):
+        self.current_release = getTemplateValue(self.baseurl + 'CURRENT_VERSION')
+        self.version_map['{{CURRENT_VERSION}}'] = self.current_release
         self.beta = getTemplateValue(self.baseurl + 'BETA_VERSION')
         self.version_map['{{BETA_VERSION}}'] = self.beta
         self.aurora = getTemplateValue(self.baseurl + 'AURORA_VERSION')

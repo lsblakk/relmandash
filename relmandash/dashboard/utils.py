@@ -155,5 +155,5 @@ def isTracked(bug, version):
                 and (getattr(bug, 'cf_status_firefox'+str(version)) == 'affected'
                 or getattr(bug, 'cf_status_firefox'+str(version)) == '---'))
     except AttributeError:
-        print 'bug version ' + str(version) + 'does not exist'
+        print 'bug version ' + str(version) + ' does not exist'
     return False
