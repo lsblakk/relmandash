@@ -86,24 +86,33 @@
                 </tr>
                 <tr><td>Show Summary</td>
                 <td>
-                {% if query.show_summary == True %}
-                    <input type="hidden" name="show_summary" value="yes">Yes
-                {% else %}
-                <select name="show_summary"><option value="yes">Yes</option>
-                <option value="no" selected="selected">No</option></select>
-                {%endif%}
+                    <select name="show_summary">
+                        <option value="yes" {% if query.show_summary %}selected="selected"{% endif %}>Yes</option>
+                        <option value="no" {% if not query.show_summary %}selected="selected"{% endif %}>No</option>
+                    </select>
                 </td></tr>
+                <tr><td>Shared</td>
+                <td>
+                    <select name="shared">
+                        <option value="yes" {% if query.shared %}selected="selected"{% endif %}>Yes</option>
+                        <option value="no" {% if not query.shared %}selected="selected"{% endif %}>No</option>
+                    </select>
+                </td></tr>
+                <!-- Not ready yet
                 <tr>
                 <td>Actions</td>
                 <td>
                 {% if actions %}
+                    <select name="actions" size="5" multiple>
                     {% for action in actions %}
-                        <select name="actions">
-                            <option value="{{ action.id }}" {% if action in query.actions %}selected=selected{% endif %}>{{ action.name }}</option>
-                    {% endfor %}</td>
+                            <option value="{{ action.id }}" {% if action in query.actions %}selected="selected"{% endif %}>{{ action.name }}</option>
+                    {% endfor %}
+                    </select>
+                </td>
                 {% else %}<td>No actions created yet</td>
                 {% endif %}
                 </tr>
+            -->
                 </table>
                 <input type="submit" name="submit" value="Save changes"> 
                 or 

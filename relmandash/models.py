@@ -55,17 +55,19 @@ class Query(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(100), nullable=False)
     show_summary = db.Column(db.Boolean, nullable=False)
+    shared = db.Column(db.Boolean, nullable=False)
     url = db.Column(db.Text)
     owner_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
     # many to many Query <-> Action
-    actions = db.relationship('Action', secondary=ActionQuery)
+    actions = db.relationship('Action', secondary=ActionQuery, remote_side=[id])
     results = []
 
-    def __init__(self, name, description, show_summary, url, owner):
+    def __init__(self, name, description, show_summary, shared, url, owner):
         self.vt = VersionTracker()
         self.name = name
         self.description = description
         self.show_summary = show_summary
+        self.shared = shared
         self.url = url
         self.owner = owner
 

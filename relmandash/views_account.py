@@ -32,6 +32,10 @@ def view_individual(user):
     try:
         bmo = session['bmo']
         queries = Query.query.filter_by(owner_id=user.id).all()
+        shared_queries = Query.query.filter_by(shared=True).all()
+        for q in shared_queries:
+            if q.owner_id != user.id:
+                queries.append(q)
         for query in queries:
             query.results = bmo.get_bug_list(query_url_to_dict(query.urlInterpolate()))
             print "Found %s bugs" % len(query.results)
@@ -106,18 +110,19 @@ def create_query(user, request):
         query_desc = request.form['description']
         query_url = request.form['url']
         query_show_summary = request.form['show_summary']
-        query_actions = request.form.getlist('actions')
+        query_shared = request.form['shared']
+        #query_actions = request.form.getlist('actions')
         user = session['user']
 
         query = Query(name=query_name, description=query_desc, url=query_url,
-                      show_summary=query_show_summary, owner=user)
+                      show_summary=query_show_summary, shared=query_shared, owner=user)
         db.session.add(query)
 
-        for action_id in query_actions:
-            query.actions.append(Action.query.filter_by(id=action_id).first())
+        #for action_id in query_actions:
+        #   query.actions.append(Action.query.filter_by(id=action_id).first())
         db.session.commit()
     except Exception, e:
-        raise Exception('Failed to create view: ' + str(e))
+        raise Exception('Failed to create query: ' + str(e))
 
 
 def create_action(user, request):
@@ -380,8 +385,9 @@ def edit_query(query_id):
                 query.name = request.form['queryname']
                 query.description = request.form['description']
                 query.url = request.form['url']
-                query.actions = request.form['actions']
+                #query.actions = request.form['actions']
                 query.show_summary = request.form['show_summary']
+                query.shared = request.form['shared']
                 db.session.commit()
                 message = 'Query updated'
     except Exception, e:
@@ -571,5 +577,6 @@ def index():
         elif request.args.keys():
             raise Exception('Invalid query!')
     except Exception, e:
+        message = "You need to login"
         error = e
-    return render_template('index.html', args=session, message=message, error=error)
+    return redirect(url_for('login', error=error, message="Please login to access dashboard or sign up if you don't have an account yet."))
