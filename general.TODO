@@ -1,24 +1,26 @@
 Things to do:
- ✔ get view of all a user's queries @done (13-06-26 22:33)
- ✔ allow for sharing queries with any user @done (13-06-26 22:33)
- ☐ check queries are valid before running, don't pull the ones that don't work - make sure if a query can't be run, it doesn't break the view of the individual user page
- ☐ allow for selecting which queries to show on 'individual' page
- ☐ make 'views' be about selecting queries
- ☐ timeout on queries running
- ✔ put each query in its own tab @done (13-06-25 23:37)
- ☐ allow for selecting only certain queries
- ✔ query should *not* be interpolated when creating/saving, only on pulling it out @done (13-06-25 23:37)
- ✔ display the whole query @done (13-06-26 22:33)
- ☐ need to add code to utils.py for pulling a per-query buglist and handing to macros
- ☐ make bug model not need manual update for version bumps
+ ☐ check queries are valid before running - make sure if a query can't be run, it doesn't break the view of the individual user page
+ ☐ don't pull the queries that don't resolve
+ ☐ allow for selecting which queries to show on 'individual'/home page
+ ☐ make 'views' be about selecting queries - do we really need product/component/user selection?
+ ☐ timeout on queries running - reload tabs?
+ ☐ need to add code to utils.py for pulling a per-query buglist and handing to macros (?? i forget what this is, might not be needed)
 
  Bug Fixes:
- ☐ user page on server site
- ✔ fix query edit & update of new url input (wrap string?) @done (13-06-26 22:32)
- ☐ table css is broken on live site - not sure why
- ✔ bug count is off for tracked beta bugs (84 in query, 22 showing in tab - why?) @done (13-06-26 22:33)
+ ☐ table css is ugly - fix it
 
 Round 2:
- ☐ actions
- ☐  run scripts
- 
+ ☐ implement actions properly
+ ☐ run scripts against the db on a schedule
+ ☐ make bug model not need manual update for version bumps
+
+＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
+Archive:
+ ✔ user page on server site @done (13-06-26 23:11)
+ ✔ get view of all a user's queries @done (13-06-26 22:33)
+ ✔ allow for sharing queries with any user @done (13-06-26 22:33)
+ ✔ put each query in its own tab @done (13-06-25 23:37)
+ ✔ query should *not* be interpolated when creating/saving, only on pulling it out @done (13-06-25 23:37)
+ ✔ display the whole query @done (13-06-26 22:33)
+ ✔ fix query edit & update of new url input (wrap string?) @done (13-06-26 22:32)
+ ✔ bug count is off for tracked beta bugs (84 in query, 22 showing in tab - why?) @done (13-06-26 22:33)
