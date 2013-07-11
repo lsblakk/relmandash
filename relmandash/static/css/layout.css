@@ -2,7 +2,7 @@ body {
 	margin:0;
 	padding:0;
 	border:0;			/* This removes the border around the viewport in old versions of IE */
-	width:90%;
+	width:100%;
 	background:#fff;
 	min-width:600px;		/* Minimum width of layout - remove line if not required */
 					/* The min-width property does not work in old versions of Internet Explorer */
@@ -19,6 +19,7 @@ p {
 img {
 	margin:10px 0 5px;
 }
+
 #ads img {
 	display:block;
 	padding-top:10px;
@@ -50,7 +51,6 @@ img {
 #header ul li {
 	display:inline;
 	list-style:none;
-	margin:0;
 	padding:0;
 }
 #header ul li a {

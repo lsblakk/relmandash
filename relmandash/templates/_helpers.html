@@ -19,12 +19,14 @@
                 'class': '{{ bug.id }} {{ bug.severity }} '+assigned.substring(0,assigned.indexOf('@')),
                 html:    '<td class="table"><a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">{{bug.id}}</a></td><td class="table">{{bug.component}}</td><td class="table">{{bug.severity}}</td><td class="table">{{bug.priority}}</td><td class="table">{{bug.summary|truncate(80)}}</td><td class="bubble"><a href="https://bugzilla.mozilla.org/show_bug.cgi?id={{bug.id}}">{{bug.id}} {{bug.summary|truncate(80)}}</a><br/><span class="modified">last modified: {{bug.last_change_time}}</span></td>'
             });
-            
+
             row.append('<span class="hidden id">{{bug.id}}</span>');
             row.append('<span class="hidden severity">{{bug.severity}}</span>');
             row.append('<span class="hidden priority">{{bug.priority}}</span>');
             row.append('<span class="hidden component">{{bug.component|replace(' ','_')|replace(':','')|replace(',','')}}</span>');
             row.addClass("{{bug.component|replace(' ','_')|replace(':','')|replace(',','')}}");
+            row.addClass("{{bug.assigned_to.name|replace('@','_')}}");
+            row.append('<span class="hidden assignee">{{bug.assigned_to.name|replace('@','_')}}</span>');
             $('div#tab_{{tab}} > table > tbody').append(row);
         }
     </script>

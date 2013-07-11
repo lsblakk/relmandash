@@ -70,3 +70,4 @@ $( "#btn_login" )
         $( "#form_login" ).dialog( "open" );
     });
 });*/
+);

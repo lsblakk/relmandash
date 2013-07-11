@@ -37,8 +37,10 @@ def view_individual(user):
             if q.owner_id != user.id:
                 queries.append(q)
         for query in queries:
+            # TODO - test query here (request lib?) before trying to get buglist
+            print query.name
             query.results = bmo.get_bug_list(query_url_to_dict(query.urlInterpolate()))
-            print "Found %s bugs" % len(query.results)
+            print "Found %s bugs for query: %s, url: %s" % (len(query.results), query.name, query.url)
     except Exception, e:
         error = 'Individual view: ' + str(e)
     return render_template('individual.html', error=error, queries=queries, user=user)

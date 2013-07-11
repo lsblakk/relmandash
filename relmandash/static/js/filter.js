@@ -3,7 +3,7 @@ function recalculateLength() {
         var pp = $(this).parent().parent();
         if (pp.prop("tagName") == "DIV") {
             var rows = pp.find("tbody > tr.show").length;
-            if (rows == 0) {
+            if (rows === 0) {
                 pp.find(".empty").text("No bugs for current filter");
                 //$("thead").hide();
             } else {
@@ -12,7 +12,7 @@ function recalculateLength() {
             $(this).text('(' + rows + ')');
         } else if (pp.prop("tagName") == "LI") {
             var rows = $($(this).parent().attr('href')).find("tbody > tr.show").length;
-            if (rows == 0 && $($(this).parent().attr('href')).find("div").length == 0) {
+            if (rows === 0 && $($(this).parent().attr('href')).find("div").length === 0) {
                 $($(this).parent().attr('href')).find(".empty").text("No bugs for current filter");
                 //$("thead").hide();
             } else {
@@ -31,7 +31,7 @@ function recalculateTotal() {
         var pp = $(this).parent().parent();
         if (pp.prop("tagName") == "DIV" && pp.attr("class") != "card") {
             var rows = pp.find("tbody > tr").length;
-            if (rows == 0) {
+            if (rows === 0) {
                 pp.hide();
             }
             $(this).text('(' + rows + ')');
@@ -39,8 +39,8 @@ function recalculateTotal() {
         } else if (pp.prop("tagName") == "LI") {
             var href = $(this).parent().attr('href');
             var rows = $(href).find("tbody > tr").length;
-            if (rows == 0) {
-                if ($(href).find("div").length == 0) {
+            if (rows === 0) {
+                if ($(href).find("div").length === 0) {
                     pp.hide();
                 } else {
                     $(href).children(".empty").text("No bugs found");
@@ -51,7 +51,7 @@ function recalculateTotal() {
             total += rows;
         }
     });
-    if (total == 0) {
+    if (total === 0) {
         $("#message").text("No bugs found!");
     }
 }
@@ -75,12 +75,12 @@ function activateTags() {
         var checkbox = $(this).prev();
         checkbox.prop('checked', !checkbox.prop('checked'));
     });
-    
+
     $("div.filter.keyword > input[type=checkbox]").on( "change", function() {
         //var className = $(this).attr('value');
         //var selectedPanel = $('#tabs div[aria-expanded="true"]');
         //var method = $('#tagmethod option:selected').text();
-        
+
         /*if (method == 'Highlight') {
             var rows = selectedPanel.find("tr."+className);
             if ($(this).prop('checked') == false) {
@@ -93,7 +93,7 @@ function activateTags() {
                 } 
             }
         } else if (method == 'Filter') {*/
-            if ($("input:checked").length == 0) {
+            if ($("input:checked").length === 0) {
                 // show all if none are checked
                 //selectedPanel.find("tr").show();
                 $("tbody > tr").addClass('show');
@@ -112,7 +112,6 @@ function activateTags() {
                 recalculateLength();
             }
         //}
-        
     } );
 }
 
@@ -121,9 +120,9 @@ function activateComponents() {
         var checkbox = $(this).children("input:checkbox")[0];
         checkbox.prop('checked', !checkbox.prop('checked'));
     });
-    
+
     $("div.filter > input:checkbox").on( "change", function() {
-            if ($("input:checked").length == 0) {
+            if ($("input:checked").length === 0) {
                 $("tbody > tr").addClass('show');
                 $("tbody > tr").show();
                 recalculateTotal();
