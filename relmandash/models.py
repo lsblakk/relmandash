@@ -23,32 +23,6 @@ class Component(db.Model):
     def __repr__(self):
         return '<Component %r from Product %r>' % (self.description, self.product)
 
-
-ActionQuery = db.Table(
-    'Actions_Queries',
-    db.Column('action_id', db.Integer, db.ForeignKey('Actions.id')),
-    db.Column('query_id', db.Integer, db.ForeignKey('Queries.id'))
-)
-
-
-class Action(db.Model):
-    __tablename__ = 'Actions'
-    id = db.Column(db.Integer, Sequence('action_id_seq'), primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    script = db.Column(db.Text)
-    extension = db.Column(db.String(100), nullable=False)
-    runtime = db.Column(db.String(100), nullable=False)
-
-    def __init__(self, name, script, extension, runtime):
-        self.name = name
-        self.script = script
-        self.extension = extension
-        self.runtime = runtime
-
-    def __repr__(self):
-        return "%s(%r)" % (self.__class__, self.__dict__)
-
-
 class Query(db.Model):
     __tablename__ = 'Queries'
     id = db.Column(db.Integer, Sequence('query_id_seq'), primary_key=True)
@@ -58,9 +32,6 @@ class Query(db.Model):
     shared = db.Column(db.Boolean, nullable=False)
     url = db.Column(db.Text)
     owner_id = db.Column(db.Integer, db.ForeignKey('Users.id'))
-    # many to many Query <-> Action
-    actions = db.relationship('Action', secondary=ActionQuery, remote_side=[id])
-    results = []
 
     def __init__(self, name, description, show_summary, shared, url, owner):
         self.vt = VersionTracker()

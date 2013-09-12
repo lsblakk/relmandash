@@ -21,6 +21,7 @@
     {% for keyword in bug.keywords %}
         <script>$(".{{bug.id}}").addClass("{{keyword}}");</script>
     {% endfor %}
+    <script>$(".{{bug.id}}").addClass("{{bug.assigned_to.real_name}}");</script>
 {%- endmacro %}
 
 {% macro printComponentTab(components, bugs, tab, header) %}
@@ -78,6 +79,7 @@
     {% for keyword in bug.keywords %}
         <script>$(".{{bug.id}}").addClass("{{keyword}}");</script>
     {% endfor %}
+    <script>$(".{{bug.id}}").addClass("{{bug.assigned_to.name|replace('@','_')}}");</script>
 {%- endmacro %}
 
 {% macro printTab(bugs, tab, header) %}

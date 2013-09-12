@@ -113,37 +113,14 @@ def create_query(user, request):
         query_url = request.form['url']
         query_show_summary = request.form['show_summary']
         query_shared = request.form['shared']
-        #query_actions = request.form.getlist('actions')
         user = session['user']
 
         query = Query(name=query_name, description=query_desc, url=query_url,
                       show_summary=query_show_summary, shared=query_shared, owner=user)
         db.session.add(query)
-
-        #for action_id in query_actions:
-        #   query.actions.append(Action.query.filter_by(id=action_id).first())
         db.session.commit()
     except Exception, e:
         raise Exception('Failed to create query: ' + str(e))
-
-
-def create_action(user, request):
-    try:
-        action_name = request.form['actionname']
-        action_script = request.form['script']
-        action_ext = request.form['extension']
-        if action_name == '':
-            raise Exception('Need an action name to create & save')
-        if action_script != '' and action_ext == '':
-            raise Exception('Need an extension if a script is included')
-        action_runtime = request.form['runtime']
-
-        action = Action(name=action_name, script=action_script, runtime=action_runtime, extension=action_ext)
-        db.session.add(action)
-        db.session.commit()
-    except Exception, e:
-        raise Exception('Failed to create action: ' + str(e))
-
 
 def verify_account(user, password):
     if user is None:
@@ -316,7 +293,6 @@ def profile(email, message='', error=''):
     defaultview = None
     otherviews = None
     queries = None
-    actions = None
     if 'user' in session:
         try:
             initializeSession()
@@ -325,7 +301,6 @@ def profile(email, message='', error=''):
             defaultview = View.query.filter_by(owner_id=user.id).filter_by(default=True).first()
             otherviews = View.query.filter_by(owner_id=user.id).filter_by(default=False).all()
             queries = Query.query.filter_by(owner_id=user.id).all()
-            actions = Action.query.order_by(Action.name).all()
         except Exception, e:
             error = e
         return render_template(
@@ -334,7 +309,6 @@ def profile(email, message='', error=''):
             defaultview=defaultview,
             otherviews=otherviews,
             queries=queries,
-            actions=actions,
             message=message,
             error=error
         )
@@ -387,7 +361,6 @@ def edit_query(query_id):
                 query.name = request.form['queryname']
                 query.description = request.form['description']
                 query.url = request.form['url']
-                #query.actions = request.form['actions']
                 query.show_summary = request.form['show_summary']
                 query.shared = request.form['shared']
                 db.session.commit()
@@ -411,56 +384,6 @@ def view_queries_by_user(user_id):
         error = e
         return redirect(url_for('profile', email=session['user'].email, error=error))
     return render_template('view_queries_by_user.html', queries=string_queries, error=error)
-
-
-'''
-        ACTIONS
-'''
-
-
-@app.route('/add_action', methods=['GET', 'POST'])
-def add_action():
-    error = None
-    email = ''
-    message = ''
-    error = ''
-    try:
-        initializeSession()
-        if request.method == 'GET':
-            return render_template('addaction.html')
-        else:
-            user = session['user']
-            create_action(user, request)
-            email = user.email
-            message = 'New action created!'
-    except Exception, e:
-        error = e
-    return redirect(url_for('profile', email=email, message=message, error=error))
-
-
-@app.route('/edit_action/<int:action_id>', methods=['POST'])
-def edit_action(action_id):
-    error = ''
-    message = ''
-    try:
-        initializeSession()
-        if request.form['submit'] == 'Delete action':
-            action = Action.query.filter_by(id=action_id).first()
-            db.session.delete(action)
-            db.session.commit()
-        else:
-            action = Action.query.filter_by(id=action_id).first()
-            if action is not None:
-                action.name = request.form['actionname']
-                action.script = request.form['script']
-                action.extension = request.form['extension']
-                action.runtime = request.form['runtime']
-                db.session.commit()
-                message = 'Action updated'
-    except Exception, e:
-        error = e
-    return redirect(url_for('profile', email=session['user'].email, message=message, error=error))
-
 
 '''
         VIEWS
@@ -581,4 +504,4 @@ def index():
     except Exception, e:
         message = "You need to login"
         error = e
-    return redirect(url_for('login', error=error, message="Please login to access dashboard or sign up if you don't have an account yet."))
+    return redirect(url_for('login', error=error, message=message))

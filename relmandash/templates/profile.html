@@ -98,21 +98,6 @@
                         <option value="no" {% if not query.shared %}selected="selected"{% endif %}>No</option>
                     </select>
                 </td></tr>
-                <!-- Not ready yet
-                <tr>
-                <td>Actions</td>
-                <td>
-                {% if actions %}
-                    <select name="actions" size="5" multiple>
-                    {% for action in actions %}
-                            <option value="{{ action.id }}" {% if action in query.actions %}selected="selected"{% endif %}>{{ action.name }}</option>
-                    {% endfor %}
-                    </select>
-                </td>
-                {% else %}<td>No actions created yet</td>
-                {% endif %}
-                </tr>
-            -->
                 </table>
                 <input type="submit" name="submit" value="Save changes"> 
                 or 
@@ -126,46 +111,11 @@
             });
         </script>
     {% endmacro %}
-    {% macro printaction(action) %}
-        <li id="action_header_{{action.id}}" class="ui-corner-all"><a href="{{ action.name }}">{{action.name}} <small>(click to edit)</small></a></li>
-        <div id="action_{{action.id}}" style="display: none">
-            <form action="{{ url_for('edit_action', action_id=action.id) }}" method="post">
-               <table>
-               <tr>
-               <td>Name</td>
-                <td><input type="text" name="actionname" id="actionname" value="{{action.name}}"/></td>
-                </tr>
-                <tr>
-                <td>Script</td>
-                <td><textarea name="script" id="script" height="500px" width="90px">{{action.script}}</textarea></td>
-                </tr>
-                <tr>
-                <td>Extension</td>
-                <td><input type="text" name="extension" id="extension" value="{{action.extension}}"/></td>
-                </tr>
-                <tr>
-                <td>Runtime</td>
-                <td><textarea name="runtime" id="runtime">{{action.runtime}}</textarea></td>
-                </tr>
-                </table>
-                <input type="submit" name="submit" value="Save changes"> 
-                or 
-                <input type="submit" name="submit" value="Delete action">
-            </form>
-        </div>
-        <script>
-            $('#action_header_{{action.id}}').click(function() {
-                $("#action_{{action.id}}").toggle();
-                return false;
-            });
-        </script>
-    {% endmacro %} 
     <div id="tabs">
         <ul id="ul_tabs">
             <li><a href="#tab_general">General</a></li>
             <li><a href="#tab_views">Views</a></li>
             <li><a href="#tab_queries">Queries</a></li>
-            <li><a href="#tab_actions">Actions</a></li>
         </ul>
         <div id="tab_general">
             <h3>General Account Settings</h3>
@@ -242,26 +192,6 @@
             <h4><a href="{{ url_for('view_queries_by_user', user_id=session.user.id) }}">Run All Saved Queries</a></h4>
             <form action="{{ url_for('add_query') }}" method="get">
                 <input type="submit" value="New Query" name="Add a query">
-            </form>
-        </div>
-        <div id="tab_actions">
-            <p>
-            Put the body of the script in the script box, then the extension (.py)
-            </p>
-            <div class="box effect1 ui-corner-all">
-                <h3>Saved Actions</h3>
-            </div>
-            <div class="no-bullets">
-                <ul>
-                {% if actions %}
-                {% for action in actions %}
-                    {{ printaction(action) }}
-                {% endfor %}
-                {% endif %}
-                </ul>
-            </div>
-            <form action="{{ url_for('add_action') }}" method="get">
-                <input type="submit" value="New Action" name="Add an action">
             </form>
         </div>
     </div>
