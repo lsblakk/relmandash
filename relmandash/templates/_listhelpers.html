@@ -21,7 +21,7 @@
     {% for keyword in bug.keywords %}
         <script>$(".{{bug.id}}").addClass("{{keyword}}");</script>
     {% endfor %}
-    <script>$(".{{bug.id}}").addClass("{{bug.assigned_to.real_name}}");</script>
+    <script>$(".{{bug.id}}").addClass("{{bug.assigned_to.real_name.split()[0]}}");</script>
 {%- endmacro %}
 
 {% macro printComponentTab(components, bugs, tab, header) %}

@@ -49,8 +49,8 @@
     {% endif %}
     <script>
         if ($('div#tab_{{tab}}').find(".{{bug.id}}").length == 1) {
-            $("tr.{{bug.id}}").addClass("{{bug.assigned_to.real_name}}");
-            $("tr.{{bug.id}}").append('<span class="hidden assignee">{{bug.assigned_to.real_name}}</span>');
+            $("tr.{{bug.id}}").addClass("{{bug.assigned_to.real_name.split()[0]|replace(';','')}}");
+            $("tr.{{bug.id}}").append('<span class="hidden assignee">{{bug.assigned_to.real_name.split()[0]|replace(';','')}}</span>');
         }
     </script>
 {% endmacro %}
