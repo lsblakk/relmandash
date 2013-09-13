@@ -5,8 +5,6 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import timedelta
 from config import *
 from utils import *
-import jinja2
-import scrubber
 
 # configuration
 DEBUG = True

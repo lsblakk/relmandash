@@ -3,16 +3,15 @@ function print_filter(type) {
     $("span."+type).each(function(index) {
         var keyword = $(this).text();
         if ($.inArray(keyword,keywords) == -1) {
-            keywords.push(keyword);
-            var print = keyword;
-            if (type == 'component') {
-                print = keyword.replace(/_/g,' ');
-            }
-            $("#"+type+"_container").append('<div class="filter ' + type + '"><input type="checkbox" value="' + keyword + '"/>' + print + ' <span class="filter_length"></span></div>');
+            keywords.push(keyword.toLowerCase());
         }
     });
     if (keywords.length === 0) {
         $("#"+type+"_container").append('<span class="extra_info">No keywords related.</span>');
+    } else {
+        keywords = keywords.sort();
+        for (var i = 0; i < keywords.length; i++) 
+            $("#"+type+"_container").append('<div class="filter ' + type + '"><input type="checkbox" value="' + keywords[i] + '"/>' + keywords[i] + ' <span class="filter_length"></span></div>');
     }
 }
 
