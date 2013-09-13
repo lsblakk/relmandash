@@ -16,11 +16,13 @@ function print_filter(type) {
     }
 }
 
+
+// try document.getElementsByClass for count instead
 function count_filter() {
     $("input[type=checkbox]").attr("disabled", false);
     $(".filter_length").each(function() {
         var rows = 0;
-        rows = $("tr."+$(this).prev().val()).length;
+        rows = $("tr[class~='" + $(this).prev().val() + "']").length;
         $(this).text(" ("+rows+")");
         if (rows === 0) {
             $(this).parent().addClass("disabled");

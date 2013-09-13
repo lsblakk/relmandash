@@ -5,6 +5,8 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import timedelta
 from config import *
 from utils import *
+import jinja2
+import scrubber
 
 # configuration
 DEBUG = True
@@ -29,11 +31,6 @@ from dashboard.products import ComponentsTracker
 def init_db():
     """Creates the database tables."""
     db.create_all()
-
-
-@app.teardown_appcontext
-def close_db_connection(exception):
-    """Closes the database again at the end of the request."""
 
 
 app.jinja_env.globals.update(getTrackedBugs=getTrackedBugs)
