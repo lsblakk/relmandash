@@ -581,4 +581,4 @@ def index():
     except Exception, e:
         message = "You need to login"
         error = e
-    return redirect(url_for('login', error=error, message="Please login to access dashboard or sign up if you don't have an account yet."))
+    return redirect(url_for('login', error=error, message=message))
