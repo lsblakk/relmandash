@@ -11,17 +11,21 @@ This project runs on Flask - follow the instructions below to check out the code
 
     mkvirtualenv --no-site-packages relmandash
     
-#. Install pip::
+#. If you need to, install pip::
 
     easy_install pip
     
 #. Install the dependencies for relmandash::
 
     pip install -r requirements.txt
+
+#. Create a config.py file and input your postgres database info::
+
+		DB_URL='postgresql://user:password@localhost/database_name'
     
 #. Run dashboard.py to try out the application locally::
 
-    python dashboard.py db_setup --> to set up database and run server
-    python dashboard.py         --> to run server only
+    python runserver.py db_setup --> to set up database and run server
+    python runserver.py         --> to run server only
 
 # In a WSGI deploymnt scenario, make sure to add your virtualenv's site-packages to the WSGIPythonPath so that the app can find bztools and others
