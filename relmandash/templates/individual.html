@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
+<h1>Default View for {% if session.logged_in %}{{ session.user.email }}{% endif %}</h1>
 <div id="tabs">
     <ul id="ul_tabs">
     {% for query in queries %}

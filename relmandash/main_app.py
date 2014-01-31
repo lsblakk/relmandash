@@ -22,6 +22,7 @@ def loginSession(user, password):
     session['user'] = user
     session['bmo'] = BMOAgent(user.email, password)
     session.permanent = True
+    # TODO(lsblak): Make there be a default view available to non-logged in user
     #view = View.query.filter_by(default=True).filter_by(owner_id=user.id).first()
     return view_individual(user)
 
@@ -37,11 +38,12 @@ def view_individual(user):
             if q.owner_id != user.id:
                 queries.append(q)
         for query in queries:
-            # TODO - test query here (request lib?) before trying to get buglist
+            # TODO(lsblakk): test bugzilla query here (request lib?) before trying to get buglist
             print query.name
             query.results = bmo.get_bug_list(query_url_to_dict(query.urlInterpolate()))
             print "Found %s bugs for query: %s, url: %s" % (len(query.results), query.name, query.url)
     except Exception, e:
+        # TODO(lsblakk): clean the error message to remove password
         error = 'Individual view: ' + str(e)
     return render_template('individual.html', error=error, queries=queries, user=user)
 
@@ -113,37 +115,14 @@ def create_query(user, request):
         query_url = request.form['url']
         query_show_summary = request.form['show_summary']
         query_shared = request.form['shared']
-        #query_actions = request.form.getlist('actions')
         user = session['user']
 
         query = Query(name=query_name, description=query_desc, url=query_url,
                       show_summary=query_show_summary, shared=query_shared, owner=user)
         db.session.add(query)
-
-        #for action_id in query_actions:
-        #   query.actions.append(Action.query.filter_by(id=action_id).first())
         db.session.commit()
     except Exception, e:
         raise Exception('Failed to create query: ' + str(e))
-
-
-def create_action(user, request):
-    try:
-        action_name = request.form['actionname']
-        action_script = request.form['script']
-        action_ext = request.form['extension']
-        if action_name == '':
-            raise Exception('Need an action name to create & save')
-        if action_script != '' and action_ext == '':
-            raise Exception('Need an extension if a script is included')
-        action_runtime = request.form['runtime']
-
-        action = Action(name=action_name, script=action_script, runtime=action_runtime, extension=action_ext)
-        db.session.add(action)
-        db.session.commit()
-    except Exception, e:
-        raise Exception('Failed to create action: ' + str(e))
-
 
 def verify_account(user, password):
     if user is None:
@@ -154,7 +133,7 @@ def verify_account(user, password):
     _hash = m.digest()
 
     if _hash != user.hash.decode('base64'):
-        raise Exception('Invalid password')
+        raise Exception('Invalid password in verify_account')
     return True
 
 '''
@@ -229,7 +208,6 @@ def signup():
             error = e
     return render_template('index.html', error=error)
 
-
 @app.route('/edit_account', methods=['POST'])
 def edit_account():
     error = ''
@@ -239,24 +217,21 @@ def edit_account():
         email = request.form['email']
         password = request.form['password']
         user = User.query.filter_by(email=session['user'].email).first()
-        print user.email
 
         if verify_account(user, password):
             newpassword = request.form['newpassword']
-            print 'shit'
             if newpassword != request.form['confirmpassword']:
                 raise Exception('Please re-enter the same password')
-            print 'dshit'
-            if newpassword == '':
-                bmo = BMOAgent(email, password)
-                bug = bmo.get_bug('80000')
             else:
                 session['bmo'] = bmo = BMOAgent(email, newpassword)
-                bug = bmo.get_bug('80000')
+                try:
+                    bug = bmo.get_bug('80000')
+                except:
+                    error = "Could not get bug, check your account details"
                 salt = os.urandom(8)
                 m = hashlib.md5()
                 m.update(salt)
-                m.update(password)
+                m.update(newpassword)
                 _hash = m.digest()
                 user.hash = _hash.encode('base64')
                 user.salt = salt.encode('base64')
@@ -269,7 +244,6 @@ def edit_account():
         error = e
     return profile(email=email, message=message, error=error)
 
-
 @app.route('/logout')
 def logout(message=''):
     session.clear()
@@ -278,15 +252,14 @@ def logout(message=''):
         message = 'You are now logged out'
     return render_template('index.html', message=message)
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
     try:
-        initializeSession()
         if request.method == 'GET':
             return render_template('login.html')
         else:
+            initializeSession()
             email = request.form['email']
             password = request.form['password']
             user = User.query.filter_by(email=email).first()
@@ -300,7 +273,7 @@ def login():
             _hash = m.digest()
 
             if _hash != user.hash.decode('base64'):
-                raise Exception('Invalid password')
+                raise Exception('Invalid password in login')
             else:
                 return loginSession(user, password)
     except Exception, e:
@@ -316,7 +289,6 @@ def profile(email, message='', error=''):
     defaultview = None
     otherviews = None
     queries = None
-    actions = None
     if 'user' in session:
         try:
             initializeSession()
@@ -325,7 +297,6 @@ def profile(email, message='', error=''):
             defaultview = View.query.filter_by(owner_id=user.id).filter_by(default=True).first()
             otherviews = View.query.filter_by(owner_id=user.id).filter_by(default=False).all()
             queries = Query.query.filter_by(owner_id=user.id).all()
-            actions = Action.query.order_by(Action.name).all()
         except Exception, e:
             error = e
         return render_template(
@@ -334,7 +305,6 @@ def profile(email, message='', error=''):
             defaultview=defaultview,
             otherviews=otherviews,
             queries=queries,
-            actions=actions,
             message=message,
             error=error
         )
@@ -387,7 +357,6 @@ def edit_query(query_id):
                 query.name = request.form['queryname']
                 query.description = request.form['description']
                 query.url = request.form['url']
-                #query.actions = request.form['actions']
                 query.show_summary = request.form['show_summary']
                 query.shared = request.form['shared']
                 db.session.commit()
@@ -411,56 +380,6 @@ def view_queries_by_user(user_id):
         error = e
         return redirect(url_for('profile', email=session['user'].email, error=error))
     return render_template('view_queries_by_user.html', queries=string_queries, error=error)
-
-
-'''
-        ACTIONS
-'''
-
-
-@app.route('/add_action', methods=['GET', 'POST'])
-def add_action():
-    error = None
-    email = ''
-    message = ''
-    error = ''
-    try:
-        initializeSession()
-        if request.method == 'GET':
-            return render_template('addaction.html')
-        else:
-            user = session['user']
-            create_action(user, request)
-            email = user.email
-            message = 'New action created!'
-    except Exception, e:
-        error = e
-    return redirect(url_for('profile', email=email, message=message, error=error))
-
-
-@app.route('/edit_action/<int:action_id>', methods=['POST'])
-def edit_action(action_id):
-    error = ''
-    message = ''
-    try:
-        initializeSession()
-        if request.form['submit'] == 'Delete action':
-            action = Action.query.filter_by(id=action_id).first()
-            db.session.delete(action)
-            db.session.commit()
-        else:
-            action = Action.query.filter_by(id=action_id).first()
-            if action is not None:
-                action.name = request.form['actionname']
-                action.script = request.form['script']
-                action.extension = request.form['extension']
-                action.runtime = request.form['runtime']
-                db.session.commit()
-                message = 'Action updated'
-    except Exception, e:
-        error = e
-    return redirect(url_for('profile', email=session['user'].email, message=message, error=error))
-
 
 '''
         VIEWS
@@ -564,21 +483,12 @@ def edit_views(view_id):
 
 @app.route('/')
 def index():
-    error = ''
-    message = ''
     try:
         initializeSession()
         user = session['user']
-        product = request.args.get('product')
-        components = request.args.getlist('component')
-        style = request.args.get('style')
         if user is not None:
             return view_individual(user)
-        elif product:
-            return view_prodcomp(product=product, components=components, style=style)
-        elif request.args.keys():
-            raise Exception('Invalid query!')
-    except Exception, e:
-        message = "You need to login"
-        error = e
-    return redirect(url_for('login', error=error, message=message))
+        else:
+            return redirect(url_for('login'))
+    except Exception:
+        return redirect(url_for('login'))

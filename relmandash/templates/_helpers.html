@@ -24,9 +24,6 @@
             row.append('<span class="hidden severity">{{bug.severity}}</span>');
             row.append('<span class="hidden priority">{{bug.priority}}</span>');
             row.append('<span class="hidden component">{{bug.component|replace(' ','_')|replace(':','')|replace(',','')}}</span>');
-            row.addClass("{{bug.component|replace(' ','_')|replace(':','')|replace(',','')}}");
-            row.addClass("{{bug.assigned_to.name|replace('@','_')}}");
-            row.append('<span class="hidden assignee">{{bug.assigned_to.name|replace('@','_')}}</span>');
             $('div#tab_{{tab}} > table > tbody').append(row);
         }
     </script>
@@ -50,6 +47,12 @@
         </script>
     {% endfor %}
     {% endif %}
+    <script>
+        if ($('div#tab_{{tab}}').find(".{{bug.id}}").length == 1) {
+            $("tr.{{bug.id}}").addClass("{{bug.assigned_to.name.lower()}}");
+            $("tr.{{bug.id}}").append('<span class="hidden assignee">{{bug.assigned_to.name.lower()}}</span>');
+        }
+    </script>
 {% endmacro %}
 
 {% macro printBugs(bugs, tab) %}

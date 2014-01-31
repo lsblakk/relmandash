@@ -1,10 +1,5 @@
 import urllib2
 import re
-import datetime
-import subprocess
-import os
-import json
-from argparse import ArgumentParser
 
 def getTemplateValue(url):
     version_regex = re.compile(".*<p>(.*)</p>.*")

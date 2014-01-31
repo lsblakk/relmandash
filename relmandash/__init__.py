@@ -25,16 +25,9 @@ app.permanent_session_lifetime = timedelta(minutes=60*3)
 
 from dashboard.products import ComponentsTracker
 
-
 def init_db():
     """Creates the database tables."""
-    #db.drop_all()
     db.create_all()
-
-
-@app.teardown_appcontext
-def close_db_connection(exception):
-    """Closes the database again at the end of the request."""
 
 
 app.jinja_env.globals.update(getTrackedBugs=getTrackedBugs)
@@ -51,8 +44,7 @@ app.jinja_env.globals.update(getKeywords=getKeywords)
 app.jinja_env.globals.update(getComponents=getComponents)
 
 if __name__ == '__main__':
-    #init_db()
     app.run()
 
 from relmandash.models import *
-import views_account
+import main_app

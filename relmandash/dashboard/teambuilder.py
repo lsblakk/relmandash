@@ -45,7 +45,7 @@ try:
                         except exceptions.KeyError:
                             products_components[split[j-1]] = [split[j]]
                 component_encountered = False
-            # Get list of main modules as products
+            # TODO(lsblakk): Get list of main modules as products
             try:
                 if int(line) == product_count:
                     product_encountered = True
