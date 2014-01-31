@@ -1,0 +1,1 @@
+git+git://github.com/lianne719/bztools.git@f1b31a52980d3f6e38fd2041d991b52b888a1cef#egg=bztools-dev
