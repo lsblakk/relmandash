@@ -42,6 +42,7 @@ def main():
     direct_reports(orgchart, "lsblakk@mozilla.com")
     direct_reports(orgchart, "mitchell@mozilla.com")
 
+
 # NOTE(): accept an email address, get the direct reports, return the list of bugmail
 # Then in the main dash can build a query from someone's user account with either what's assigned to their reports
 # OR if no reports, assigned to self
