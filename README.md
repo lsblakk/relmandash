@@ -29,3 +29,9 @@ This project runs on Flask - follow the instructions below to check out the code
     python runserver.py         --> to run server only
 
 # In a WSGI deploymnt scenario, make sure to add your virtualenv's site-packages to the WSGIPythonPath so that the app can find bztools and others
+
+# Also if you encounter problems finding Postgres lib (on Mac) then run the following to put them in your path
+
+    $ sudo ln -s /Library/PostgreSQL/9.2/lib/libssl.1.0.0.dylib /usr/lib
+    $ sudo ln -s /Library/PostgreSQL/9.2/lib/libcrypto.1.0.0.dylib /usr/lib
+
